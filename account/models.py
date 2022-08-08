@@ -28,7 +28,7 @@ DOCTOR_IN = (
 )
 
 
-class Profile(models.Model):
+class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField("bio",max_length=500, blank=True)
     address = models.CharField("country ", max_length=100, blank=True, null=True)
@@ -39,6 +39,9 @@ class Profile(models.Model):
     specialist_doctor = models.CharField("  specialist_doctor", max_length=100, blank=True, null=True)
     price = models.IntegerField(" price", blank=True, null=True)
     hour_of_work = models.IntegerField("hour_of_work", blank=True, null=True)
+    day1_of_work = models.IntegerField("day1_of_work", blank=True, null=True)
+    day2_of_work = models.IntegerField("day2_of_work", blank=True, null=True)
+    day3_of_work = models.IntegerField("day3_of_work", blank=True, null=True)
     mobile = models.CharField(" mobile", blank=True, null=True,max_length=11)
     facebook = models.CharField(max_length=100, blank=True, null=True)
     google = models.CharField(max_length=100, blank=True, null=True)
@@ -49,14 +52,16 @@ class Profile(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.user.username)
-        super(Profile, self).save(*args, **kwargs)
+        super(Doctor, self).save(*args, **kwargs)
+    def __str__(self):
+        return format(self.user)
 
-    @receiver(post_save, sender=User)
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            Profile.objects.create(user=instance)
-
-    @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.profile.save()
+    # @receiver(post_save, sender=User)
+    # def create_user_profile(sender, instance, created, **kwargs):
+    #     if created:
+    #         Doctor.objects.create(user=instance)
+    #
+    # @receiver(post_save, sender=User)
+    # def save_user_profile(sender, instance, **kwargs):
+    #     instance.profile.save()
 
