@@ -1,8 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
 import logo2 from './signup.png';
-
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+// import "../style.css"
+import axios from "axios";
 
 function FormUser() {
 
@@ -143,6 +144,52 @@ function FormUser() {
 
     const submitData = (e) => {
         e.preventDefault();
+        axios
+        .post(" http://127.0.0.1:8000/signup/", {
+            first_name: userData.first_name,
+            last_name: userData.last_name,
+            email: userData.email,
+            username: userData.username,
+            password: userData.password,
+            password2: userData.password2,
+            
+        })
+        .then((res) => {
+            console.log(res)
+            setUserData({
+                first_name: "",
+                last_name: "",
+                email: "",
+                username: "",
+                password: "",
+                password2: "",
+            });
+        })
+        .catch((err) => {
+            console.log(err.response.data)
+            if(err.response.data.email)
+                {
+                    
+                    setErrors({
+                        ...errors,
+                        emailErr: 
+                        "email alreay exist"                            
+                    })
+                    console.log(errors)
+                }
+            if(err.response.data.username)
+                {
+
+                    setErrors({
+                        ...errors,
+                        usernameErr: 
+                        "username alreay exist"
+
+                    })
+                    console.log(errors.usernameErr) 
+                }
+
+        });
     }
     return (
  <>

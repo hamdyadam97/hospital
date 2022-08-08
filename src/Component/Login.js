@@ -1,13 +1,13 @@
-import React from 'react';
+ import React from 'react';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import logo from './logo.jpg';
 import { Link } from 'react-router-dom';
-
+import axios from "axios";
 
 
 function FormUser() {
-
+    // let access_token = localStorage.getItem('access_token')
     const validate = values => {
         const errors = {};
         if (!values.username) {
@@ -16,7 +16,7 @@ function FormUser() {
         }
         if (!values.password) {
             errors.password = 'Required';
-        } else if (values.password.length < 8) {
+        } else if (values.password.length < 0) {
             errors.password = 'Must be 8 characters ';
         }
 
@@ -34,7 +34,25 @@ function FormUser() {
         },
         validate,
         onSubmit: values => {
-            alert('Enter Data Success');
+            axios
+        .post(" http://127.0.0.1:8000/signin/", {
+            username: values.username,
+            password: values.password,
+        })
+        .then((res) => {
+            console.log(res)
+            localStorage.setItem('access_token', res.data.token.access)
+            let asd = localStorage.getItem('access_token')
+            
+            console.log(asd)
+            
+            
+        })
+        .catch((err) => {
+            console.log(err.response.data)
+        });
+       
+        console.log("jjjjjjjjjjjjjjjjjjjjjjjjjj")
         },
     });
     return (
