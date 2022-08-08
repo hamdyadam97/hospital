@@ -31,7 +31,7 @@ function DoctorProfile() {
             </Card>
 
             <Card className='card2'>
-                <Card.Body>
+                <Card.Body classNa>
                     <table style={{width:'100%'}}>
                         <tr>
                             <th>
@@ -95,9 +95,9 @@ function DoctorProfile() {
                         </tr>
                         <hr style={{width:'400%'}}/>
                     </table>
+                    <Button className='btn btn-info' style={{color:'white'}}>Edit Data</Button>
 
                 </Card.Body>
-                <Button className='btn btn-info' style={{color:'white'}}>Edit Data</Button>
 
             </Card>
             <Card className='card1'>
@@ -223,30 +223,6 @@ function DoctorProfile() {
                 </Card.Body>
 
             </Card>
-
-
-            {/* <Card className='usercard'>
-      <Card.Img className='docimg' src="https://thumbs.dreamstime.com/b/young-doctor-16088825.jpg" />
-      <Card.Body>
-        <Card.Title className='data'>Dr.Mohamed Ahmed</Card.Title>
-        <Card.Text className='data'>
-         Dermatology
-        </Card.Text>
-        <Button className='btn btn-primary' style={{marginLeft:'70px'}} >View Appointment </Button>
-      </Card.Body>
-
-    </Card> */}
-            {/* <Card className='usercard'>
-      <Card.Img className='docimg' src="https://thumbs.dreamstime.com/b/young-doctor-16088825.jpg" />
-      <Card.Body>
-        <Card.Title className='data'>Dr.Mohamed Ahmed</Card.Title>
-        <Card.Text className='data'>
-         Dermatology
-        </Card.Text>
-        <Button className='btn btn-primary' style={{marginLeft:'70px'}} >View Appointment </Button>
-      </Card.Body>
-
-    </Card> */}
 
 
         </div>

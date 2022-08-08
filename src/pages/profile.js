@@ -23,7 +23,7 @@ function Profile() {
     return (
         <>
             <div style={{ height: '100vh', backgroundColor:'#ececec' }}>
-            <Card >
+            <Card className='cardDoctor'>
                 <table className='table'>
                     <tr>
                     

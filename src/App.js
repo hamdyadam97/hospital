@@ -7,6 +7,9 @@ import Profile from './pages/profile';
 import NoteFound from './pages/NoteFound';
 import HistoryOfDoctors from './pages/History1';
 import DoctorForm from './pages/doctorform';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+
 function App() {
   return (
     <>
@@ -18,6 +21,9 @@ function App() {
       <Route exact path={"/profile"} component={Profile}/>
       <Route exact path={"/history"} component={HistoryOfDoctors}/>
       <Route exact path={"/doctorform"} component={DoctorForm}/>
+      <Route exact path={"/login"} component={Login} />
+       <Route exact path={"/signup"} component={SignUp} />
+
       <Route exact path={"*"} component={NoteFound}/>
 </Switch>
     {/* <DoctorProfile/> */}

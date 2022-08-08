@@ -2,8 +2,17 @@ import Card from 'react-bootstrap/Card';
 import '../styling/History.css'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { useState } from 'react';
 function DoctorForm() {
-    return (
+    // const [userData, setUserData] = useState({
+    //     name: "",
+    //     birthdate: "",
+    //     bio: "",
+    //     address: "",
+    //     mobile: "",
+    //     gender: "",
+    // })
+        return (
         <div className='page'>
             <Card style={{height:'100%'}}>
                 <table>
@@ -15,26 +24,23 @@ function DoctorForm() {
                             <Form className='formcard'>
 
                                 <Form.Label htmlFor="username">Name</Form.Label>
-                                <Form.Control type="text" id="username" placeholder="Enter Name" />
+                                <Form.Control type="text" name='name'id="username" placeholder="Enter Name" />
                             
                                 <Form.Label htmlfor="dirth">BirthDate:</Form.Label>
 
-                                <Form.Control type="date" id="dirth" name="trip-start"
+                                <Form.Control type="date" id="dirth" name="birthdate"
                     
                                     max="1999-12-31"/>
                                     <Form.Label htmlFor="bio">Bio</Form.Label>
-                                <Form.Control type="text" id="bio" placeholder="Enter bio" />
-                                    {/* <br /> */}
-                                    <Form.Label htmlFor="email">Email</Form.Label>
-                                <Form.Control type="email" id="email" placeholder="Enter email" />
+                                <Form.Control type="text" id="bio" placeholder="Enter bio" name="bio"/>
 
                                     <Form.Label htmlFor="address">Address</Form.Label>
-                                    <Form.Control type="text" placeholder="Address" />
+                                    <Form.Control type="text" placeholder="Address" name="address"/>
 
                                     <Form.Label htmlFor="tele">Mobile</Form.Label>
-                                <Form.Control type="tel" id="tele" placeholder="Enter mobile Number" />
+                                <Form.Control type="tel" id="tele" placeholder="Enter mobile Number" name=" mobile" />
                                     <br />
-                                    <Form.Select>
+                                    <Form.Select name='gender'>
                                         <option>Gender</option>
                                         <option value="1">Male</option>
                                         <option value="2">Female</option>
@@ -56,6 +62,7 @@ function DoctorForm() {
                                     <br/>
                                     <Form.Label htmlFor="gmail">Gmail</Form.Label>
                                 <Form.Control type="email" id="gmail" placeholder="Enter Gmail" />
+                                <br/>
                                     <Form.Select>
                                         <option>Day1</option>
                                         <option value="1">sunday</option>
