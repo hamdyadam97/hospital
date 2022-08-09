@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-
 from account.models import Doctor
+
 
 
 class LoginSerializer(serializers.ModelSerializer):

@@ -58,13 +58,10 @@ def doctorprofile(request):
     if serializer.is_valid():
         # username = serializer.data.get('user')
         username = serializer.validated_data['user']
-        print("SSSSSSSSSSSSSSSSSSSssss")
         image = request.data['image']
-
         print(image)
         user = User.objects.get(username=username)
         serializer.save(user=user,image=image)
-
         return Response({'msg':'Login Success'}, status=status.HTTP_200_OK)
     else:
        return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)

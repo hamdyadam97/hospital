@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'rest_framework_simplejwt',
     'corsheaders',
-    'rest_framework'
+    'rest_framework',
+    'patient',
 ]
 
 MIDDLEWARE = [
