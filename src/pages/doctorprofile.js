@@ -1,18 +1,11 @@
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLocationPin } from '@fortawesome/free-solid-svg-icons'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import chat from '../image/toppng.com-live-chat-png-1024x1024.png';
-import doctor from '../image/toppng.com-edmonton-male-family-doctors-600x698.png';
 import Card from 'react-bootstrap/Card';
 import '../styling/History.css'
 import Button from 'react-bootstrap/Button';
+import { useParams } from 'react-router-dom';
+
 function DoctorProfile() {
+    
     return (
 
 
@@ -43,7 +36,7 @@ function DoctorProfile() {
                             </td>
                             
                         </tr>
-                        <hr style={{width:'400%'}}/>
+                        <hr style={{width:'350%'}}/>
                         <tr>
                             <th>
                                 Address
@@ -53,7 +46,7 @@ function DoctorProfile() {
                                Cairo,Egypt
                             </td>
                         </tr>
-                        <hr style={{width:'400%'}}/>
+                        <hr style={{width:'350%'}}/>
                         <tr>
                             <th>
                                 Email
@@ -63,7 +56,7 @@ function DoctorProfile() {
                                mohamedAhmed@gmail.com
                             </td>
                         </tr>
-                        <hr style={{width:'400%'}}/>
+                        <hr style={{width:'350%'}}/>
                         <tr>
                             <th>
                                Specialist
@@ -73,7 +66,7 @@ function DoctorProfile() {
                                Dermatology
                             </td>
                         </tr>
-                        <hr style={{width:'400%'}}/>
+                        <hr style={{width:'350%'}}/>
                         <tr>
                             <th>
                                Mobile
@@ -83,7 +76,7 @@ function DoctorProfile() {
                                01002366772
                             </td>
                         </tr>
-                        <hr style={{width:'400%'}}/>
+                        <hr style={{width:'350%'}}/>
                         <tr>
                             <th>
                                Phone
@@ -93,13 +86,14 @@ function DoctorProfile() {
                                0882627709
                             </td>
                         </tr>
-                        <hr style={{width:'400%'}}/>
+                        <hr style={{width:'350%'}}/>
                     </table>
-                    <Button className='btn btn-info' style={{color:'white'}}>Edit Data</Button>
+                    <Button className='btn btn-primary' style={{color:'white'}}>Edit Data</Button>
 
                 </Card.Body>
 
             </Card>
+            
             <Card className='card1'>
                 <Card.Body>
                 <table style={{width:'100%'}}>
@@ -160,6 +154,7 @@ function DoctorProfile() {
                 </Card.Body>
 
             </Card>
+            
             <Card className='card2'>
                 <Card.Body>
                 <table style={{width:'100%'}}>

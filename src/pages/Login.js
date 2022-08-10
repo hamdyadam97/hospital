@@ -43,9 +43,10 @@ function FormUser() {
             console.log(res)
             localStorage.setItem('access_token', res.data.token.access)
             let asd = localStorage.getItem('access_token')
-            
+            localStorage.setItem('user', values.username)
+            let name = localStorage.getItem('user')
             console.log(asd)
-            window.location.href ='/profile'
+            window.location.href ='/doctorform'
 
             
         })
@@ -53,7 +54,6 @@ function FormUser() {
             console.log(err.response.data)
         });
        
-        console.log("jjjjjjjjjjjjjjjjjjjjjjjjjj")
         },
     });
     return (

@@ -209,7 +209,7 @@ function FormUser() {
                 <div className="col-md-6 col-lg-7 d-flex align-items-center">
         <div className="card-body p-4 p-lg-5 text-black">
 
-             <form onSubmit={(e)=> submitData(e)}  action="http://localhost:3000/login"> 
+             <form onSubmit={(e)=> submitData(e)}  > 
 
                 <h1 className="fw-normal mb-3 pb-3" style={{ letterSpacing: "1px;" , color:'#01446E'}}>SignUp Your Account</h1>
 
