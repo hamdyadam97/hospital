@@ -10,21 +10,7 @@ class Footer extends React.Component{
         <div class="box">
           <h3>Cure Sup</h3>
           <ul class="social">
-            <li>
-              <a href="#" class="facebook">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="twitter">
-                <i class="fab fa-twitter"></i>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="youtube">
-                <i class="fab fa-youtube"></i>
-              </a>
-            </li>
+       
           </ul>
           <p class="text">
           We are pioneering the shift to automated physician, clinic and hospital bookings making healthcare easily accessible in the region.
@@ -32,8 +18,6 @@ class Footer extends React.Component{
         </div>
         <div class="box">
           <ul class="links">
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Careers</a></li>
             <li><a href="#">Join CareSup Doctors</a></li>
             <li><a href="#">Covid-19</a></li>
             <li><a href="#">Ambulance</a></li>

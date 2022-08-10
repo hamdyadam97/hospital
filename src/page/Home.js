@@ -13,13 +13,11 @@ class Home extends React.Component{
           <a href="/tips" class="main-button"> Show More </a>
           
         </div>
-        <div class="image">
-          <img src="assets/imgs/4990223.png" alt="" />
+        <div class="">
+          <img src="assets/imgs/4990223.png" alt=""  width="600px"/>
         </div>
       </div>
-      <a href="#Top_Doctors" class="go-down">
-        <i class="fas fa-angle-double-down fa-2x"></i>
-      </a>
+    
     </div>
     {/* <!-- End Landing --> */}
     {/* <!-- Start Doctors --> */}
@@ -28,142 +26,39 @@ class Home extends React.Component{
       <div class="container">
         <div class="box">
           <div class="data">
-            <img src="assets/imgs/team-01.png" alt="" />
-            <div class="social">
-              <a href="#">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-youtube"></i>
-              </a>
-            </div>
+            <img src="https://st.focusedcollection.com/14026668/i/1800/focused_164883806-stock-photo-portrait-of-smiling-doctor.jpg" width="270px" alt="" />
+           
           </div>
           <div class="info">
             <h3>Name</h3>
-            <p>Simple Short Description</p>
+            <p>dermatologist
+</p>
           </div>
         </div>
         <div class="box">
           <div class="data">
-            <img src="assets/imgs/team-01.png" alt="" />
-            <div class="social">
-              <a href="#">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-youtube"></i>
-              </a>
-            </div>
+            <img src="https://venugramhospitals.com/wp-content/uploads/2016/09/doctor-2.jpg" width="270px" alt="" />
+           
           </div>
           <div class="info">
             <h3>Name</h3>
-            <p>Simple Short Description</p>
+            <p>dentist
+</p>
           </div>
         </div>
         <div class="box">
           <div class="data">
-            <img src="assets/imgs/team-01.png" alt="" />
-            <div class="social">
-              <a href="#">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-youtube"></i>
-              </a>
-            </div>
+            <img src="https://img.freepik.com/free-photo/doctor-with-his-arms-crossed-white-background_1368-5790.jpg?w=2000" alt="" width="270px" />
+            
           </div>
           <div class="info">
             <h3>Name</h3>
-            <p>Simple Short Description</p>
+            <p>Ophthalmologist
+</p>
           </div>
         </div>
-        <div class="box">
-          <div class="data">
-            <img src="assets/imgs/team-01.png" alt="" />
-            <div class="social">
-              <a href="#">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-youtube"></i>
-              </a>
-            </div>
-          </div>
-          <div class="info">
-            <h3>Name</h3>
-            <p>Simple Short Description</p>
-          </div>
-        </div>
-        <div class="box">
-          <div class="data">
-            <img src="assets/imgs/team-01.png" alt="" />
-            <div class="social">
-              <a href="#">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-youtube"></i>
-              </a>
-            </div>
-          </div>
-          <div class="info">
-            <h3>Name</h3>
-            <p>Simple Short Description</p>
-          </div>
-        </div>
-        <div class="box">
-          <div class="data">
-            <img src="assets/imgs/team-01.png" alt="" />
-            <div class="social">
-              <a href="#">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-              <a href="#">
-                <i class="fab fa-youtube"></i>
-              </a>
-            </div>
-          </div>
-          <div class="info">
-            <h3>Name</h3>
-            <p>Simple Short Description</p>
-          </div>
-        </div>
+        
+        
       </div>
     </div>
     <div class="spikes">
