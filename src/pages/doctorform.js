@@ -6,7 +6,6 @@ import { useState } from 'react';
 import axios from 'axios';
 function DoctorForm() {
     let namedata = localStorage.getItem('user')
-    console.log(namedata)
     const [userData, setUserData] = useState({
         user: "",
         bio: "",
@@ -25,9 +24,9 @@ function DoctorForm() {
         facebook: "",
         google: "",
         twitter: "",
-        image: "",
-        slug: "",
+    
     })
+    const [image,setimage]=useState()
     const [errors, setErrors] = useState({
         userErr: null,
         bioErr: null,
@@ -46,8 +45,6 @@ function DoctorForm() {
         facebookErr: null,
         googleErr: null,
         twitterErr: null,
-        imageErr: null,
-        slugErr: null,
 
 
     })
@@ -95,7 +92,7 @@ function DoctorForm() {
         if (e.target.name === 'hour_of_work') {
             setUserData({
                 ...userData,
-                price: e.target.value
+                hour_of_work: e.target.value
             })
 
             setErrors({
@@ -131,19 +128,7 @@ function DoctorForm() {
                     null
             })
         }
-        if (e.target.name === 'slug') {
-            setUserData({
-                ...userData,
-                slug: e.target.value
-            })
-
-            setErrors({
-                ...errors,
-                slugErr: e.target.value.length < 3 ?
-                    "this filed is empty" :
-                    null
-            })
-        }
+        
         if (e.target.name === 'birth_date') {
             setUserData({
                 ...userData,
@@ -273,12 +258,7 @@ function DoctorForm() {
                 twitter: e.target.value
             })
         }
-        if (e.target.name === 'image') {
-            setUserData({
-                ...userData,
-                image: e.target.value
-            })
-        }
+        
     }
 
     const submitData = (e) => {
@@ -301,10 +281,9 @@ function DoctorForm() {
         uploadData.append('google', userData.google)
         uploadData.append('twitter', userData.twitter)
 
-        uploadData.append('slug', userData.slug)
 
         uploadData.append('gender', userData.gender)
-        uploadData.append('image', userData.image )
+        uploadData.append('image', image )
         console.log(uploadData)
         e.preventDefault();
         fetch('http://127.0.0.1:8000/createprofiledoctor/', {
@@ -312,6 +291,7 @@ function DoctorForm() {
         body: uploadData})
                 .then((res) => {
                 console.log(res)
+                window.location.href = `/doctorprofile/${namedata}`
 
                 setUserData({
                     user: "",
@@ -331,13 +311,12 @@ function DoctorForm() {
                     facebook: "",
                     google: "",
                     twitter: "",
-                    image: "",
-                    slug: "",
 
                 });
-    window.location.href = '/doctorprofile'
+                
 
             })
+            
             .catch((err) => {
                 console.log(err.response.data)
 
@@ -347,31 +326,10 @@ function DoctorForm() {
 
     
 
-    // const submitData = (e) => {
-    //     e.preventDefault();
-    //     axios
-    //         .post(" http://127.0.0.1:8000/createprofiledoctor/", {
-    //             user: namedata,
-    //             bio: userData.bio,
-    //             address: userData.address,
-    //             address_detail: userData.address_detail,
-    //             birth_date: userData.birth_date,
-    //             gender: userData.gender,
-    //             doctor: userData.doctor,
-    //             specialist_doctor: userData.specialist_doctor,
-    //             price: userData.price,
-    //             hour_of_work: userData.hour_of_work,
-    //             day1_of_work: userData.day1_of_work,
-    //             day2_of_work: userData.day2_of_work,
-    //             day3_of_work: userData.day3_of_work,
-    //             mobile: userData.mobile,
-    //             facebook: userData.facebook,
-    //             google: userData.google,
-    //             twitter: userData.twitter,
-    //             image: userData.image,
-    //             slug:userData.slug
+    
+   
 
-    //         })
+    
     
 
 
@@ -386,11 +344,8 @@ function DoctorForm() {
                         <td style={{ width: '60%', marginRight: '20px' }}>
                             <Form className='formcard' onSubmit={(e) => submitData(e)}>
 
-                                <Form.Label htmlfor="username">Name</Form.Label>
-                                <Form.Control type="text" name='user' id="username" placeholder="Enter Name"
-                                    value={userData.name}
-                                    onChange={(e) => changeData(e)} />
-                                <div className="text-danger">{errors.userErr}</div>
+                                
+                                
 
                                 <Form.Label htmlfor="dirth">birth_date:</Form.Label>
 
@@ -422,11 +377,7 @@ function DoctorForm() {
 
 
                                  <br />
-                                 <Form.Label htmlfor="username">slug</Form.Label>
-                                <Form.Control type="text" name='slug' id="username" placeholder="Enter Name"
-                                    value={userData.slug}
-                                    onChange={(e) => changeData(e)} />
-                                <p className="text-danger">{errors.slugErr}</p>
+                                 
 
                                 <Form.Label htmlfor="username">address_detailErr</Form.Label>
                                 <Form.Control type="text" name='address_detail' id="username" placeholder="Enter Name"
@@ -447,8 +398,9 @@ function DoctorForm() {
 
                                 <br />
                                  <Form.Control type="file" placeholder="upload Image" name="image"
-                                    value={userData.image}
-                                    onChange={(e) => changeData(e)} />  
+                                    // value={userData.image}
+                                    onChange={(evt) => setimage(evt.target.files[0])}
+                                    />  
 
                                 <br />
 
@@ -491,14 +443,14 @@ function DoctorForm() {
                                 <p className="text-danger">{errors.doctorErr}</p> 
 
                                  <br />
-                                <Form.Group name='hour_of_work'
-                                    value={userData.hour_of_work}
-                                    onChange={(e) => changeData(e)}>
+                               
+                                    
                                     <Form.Label htmlFor="hours">from hours</Form.Label>
-                                    <Form.Control type="number" id="hours" placeholder="Enter hours" max='12' min='1' />
-                                    <Form.Label htmlFor="hours">To hours</Form.Label>
-                                    <Form.Control type="number" id="hours" placeholder="Enter hours" max='12' min='1' />
-                                </Form.Group>
+                                    <Form.Control type="number" id="hours" placeholder="Enter hours" max='12' min='1' 
+                                    name='hour_of_work'
+                                    value={userData.hour_of_work}
+                                    onChange={(e) => changeData(e)} />
+                                
                                 <p className="text-danger">{errors.hour_of_workErr}</p> 
 
                                 <br />
@@ -506,13 +458,13 @@ function DoctorForm() {
                                     value={userData.day1_of_work}
                                     onChange={(e) => changeData(e)}>
                                     <option>Day1</option>
-                                    <option value="1">sunday</option>
-                                    <option value="2">MonDay</option>
-                                    <option value="3">Tuesday</option>
-                                    <option value="4">Wednesday</option>
-                                    <option value="5">Thursday</option>
-                                    <option value="6">Friday</option>
-                                    <option value="7">Saturday</option>
+                                    <option value="sunday">sunday</option>
+                                    <option value="MonDay">MonDay</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
 
                                 </Form.Select>
                                 <p className="text-danger">{errors.day1_of_workErr}</p> 
@@ -522,13 +474,13 @@ function DoctorForm() {
                                     value={userData.day2_of_work}
                                     onChange={(e) => changeData(e)}>
                                     <option>Day2</option>
-                                    <option value="1">sunday</option>
-                                    <option value="2">MonDay</option>
-                                    <option value="3">Tuesday</option>
-                                    <option value="4">Wednesday</option>
-                                    <option value="5">Thursday</option>
-                                    <option value="6">Friday</option>
-                                    <option value="7">Saturday</option>
+                                    <option value="sunday">sunday</option>
+                                    <option value="MonDay">MonDay</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
 
                                 </Form.Select>
                                 <p className="text-danger">{errors.day2_of_workErr}</p> 
@@ -538,14 +490,13 @@ function DoctorForm() {
                                     value={userData.day3_of_work}
                                     onChange={(e) => changeData(e)}>
                                     <option>Day3</option>
-                                    <option value="1">sunday</option>
-                                    <option value="2">MonDay</option>
-                                    <option value="3">Tuesday</option>
-                                    <option value="4">Wednesday</option>
-                                    <option value="5">Thursday</option>
-                                    <option value="6">Friday</option>
-                                    <option value="7">Saturday</option>
-
+                                    <option value="sunday">sunday</option>
+                                    <option value="MonDay">MonDay</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
                                 </Form.Select>
                                 <p className="text-danger">{errors.day3_of_workErr}</p> 
 

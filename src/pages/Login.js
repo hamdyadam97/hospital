@@ -45,8 +45,8 @@ function FormUser() {
             let asd = localStorage.getItem('access_token')
             localStorage.setItem('user', values.username)
             let name = localStorage.getItem('user')
-            console.log(asd)
-            window.location.href ='/doctorform'
+            console.log(name)
+            window.location.href =`/doctorform/${name}`
 
             
         })
