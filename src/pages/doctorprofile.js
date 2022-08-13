@@ -1,231 +1,175 @@
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLocationPin } from '@fortawesome/free-solid-svg-icons'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import chat from '../image/toppng.com-live-chat-png-1024x1024.png';
-import doctor from '../image/toppng.com-edmonton-male-family-doctors-600x698.png';
 import Card from 'react-bootstrap/Card';
 import '../styling/History.css'
 import Button from 'react-bootstrap/Button';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import '../styling/doc_P.css'
+import ReactDOM from 'react-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFacebook } from "@fortawesome/free-brands-svg-icons"
+import { faTwitter } from "@fortawesome/free-brands-svg-icons"
+
+import { faGoogle } from "@fortawesome/free-brands-svg-icons"
+
 function DoctorProfile() {
+    let namedata = localStorage.getItem('user')
+    const params = useParams();
+    var k = params.name
+    const doc_name = k
+    const [doc_data, setdoc_data] = useState([]);
+
+
+
+    // }
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/doctordata/${namedata}`)
+
+            .then((res) => setdoc_data(res.data))
+            .catch((err) => console.log(err))
+    }, [])
+
+
+
+
+    const imagepath = `http://127.0.0.1:8000${doc_data.image}`
+
     return (
+        <>
+            <div className="page-content page-container" id="page-content" >
+                <div className="padding">
+                    <div className="row container d-flex justify-content-center" >
+                        <div className="col-xl-6 col-md-12" style={{ width: '80%' }}>
 
 
-        <div className='page'>
+                            <div className="card user-card-full">
+                                <div className="row m-l-0 m-r-0">
+                                    <div className="col-sm-4 bg-c-lite-green user-profile">
+                                        <div className="card-block text-center text-white">
+                                            <div className="m-b-25">
+                                                <img src={imagepath} className="img-radius" alt="User-Profile-Image" />
+                                            </div>
+                                            <h3 className="f-w-600">Dr.{doc_name}</h3>
+                                            <p>{doc_data.specialist_doctor}</p>
+                                            <Button className='btn btn-primary' >Edit Profile</Button>
+                                            <div>
+                                                <br />
+                                                <h4 className="m-b-20 p-b-5 b-b-default f-w-600">More Information</h4>
 
-            <Card className='card1'>
-                <Card.Img className='docimg' src="https://thumbs.dreamstime.com/b/young-doctor-16088825.jpg" />
-                <Card.Body>
-                    <Card.Title className='data'>Dr.Mohamed Ahmed</Card.Title>
-                    <Card.Text className='data'>
-                        Dermatology
-                    </Card.Text>
-                    <Button className='btn btn-primary' style={{ marginLeft: '130px' }} >Edit ProfilePic</Button>
-                </Card.Body>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">gender</p>
+                                                    <h6 className="text-muted f-w-400"style={{ color: '#3B9AE1' }}>{doc_data.gender}</h6>
+                                                </div>
 
-            </Card>
 
-            <Card className='card2'>
-                <Card.Body classNa>
-                    <table style={{width:'100%'}}>
-                        <tr>
-                            <th>
-                               FullName
-                            </th>
-                            <td>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">Specialist</p>
+                                                    <h6 className="text-muted f-w-400"style={{ color: 'black' }}>{doc_data.specialist_doctor}</h6>
+                                                </div>
+
+                                                
+
+
                                 
-                               Mohamed Ahmed
-                            </td>
+
                             
-                        </tr>
-                        <hr style={{width:'400%'}}/>
-                        <tr>
-                            <th>
-                                Address
-                            </th>
-                            <td>
-                                
-                               Cairo,Egypt
-                            </td>
-                        </tr>
-                        <hr style={{width:'400%'}}/>
-                        <tr>
-                            <th>
-                                Email
-                            </th>
-                            <td>
-                                
-                               mohamedAhmed@gmail.com
-                            </td>
-                        </tr>
-                        <hr style={{width:'400%'}}/>
-                        <tr>
-                            <th>
-                               Specialist
-                            </th>
-                            <td>
-                                
-                               Dermatology
-                            </td>
-                        </tr>
-                        <hr style={{width:'400%'}}/>
-                        <tr>
-                            <th>
-                               Mobile
-                            </th>
-                            <td>
-                                
-                               01002366772
-                            </td>
-                        </tr>
-                        <hr style={{width:'400%'}}/>
-                        <tr>
-                            <th>
-                               Phone
-                            </th>
-                            <td>
-                                
-                               0882627709
-                            </td>
-                        </tr>
-                        <hr style={{width:'400%'}}/>
-                    </table>
-                    <Button className='btn btn-info' style={{color:'white'}}>Edit Data</Button>
+                                            </div>
 
-                </Card.Body>
+                                        </div>
+                                    </div>
+                                    <div className="col-sm-8">
+                                        <div className="card-block">
+                                            <h4 className="m-b-20 p-b-5 b-b-default f-w-600" style={{ color: '#3B9AE1' }}>Personal Information</h4>
+                                            <div className="row">
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">FullName</p>
+                                                    <h6 className="text-muted f-w-400">{doc_name}</h6>
+                                                </div>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">Address</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.address}</h6>
+                                                </div>
 
-            </Card>
-            <Card className='card1'>
-                <Card.Body>
-                <table style={{width:'100%'}}>
-                        <tr>
-                            <th>
-                               BirthDate
-                            </th>
-                            <td>
-                                
-                               20-1-1989
-                            </td>
-                            
-                        </tr>
-                        <hr style={{width:'300%'}}/>
-                        <tr>
-                            <th>
-                                Gender
-                            </th>
-                            <td>
-                                
-                               Male
-                            </td>
-                        </tr>
-                        <hr style={{width:'300%'}}/>
-                        <tr>
-                            <th>
-                                FaceBook
-                            </th>
-                            <td>
-                                
-                              www.facebook.com
-                            </td>
-                        </tr>
-                        <hr style={{width:'300%'}}/>
-                        <tr>
-                            <th>
-                               Gmail
-                            </th>
-                            <td>
-                                
-                               mohamedAhmed@gmail
-                            </td>
-                        </tr>
-                        <hr style={{width:'300%'}}/>
-                        <tr>
-                            <th>
-                               Twitter
-                            </th>
-                            <td>
-                                
-                               www.Twitter.com
-                            </td>
-                        </tr>
-                        <hr style={{width:'300%'}}/>
-                        
-                        
-                    </table>
-                </Card.Body>
-
-            </Card>
-            <Card className='card2'>
-                <Card.Body>
-                <table style={{width:'100%'}}>
-                    <h3 style={{color:'#3B9AE1'}}>Booking Details</h3>
-                        <tr>
-                            <th>
-                               Price
-                            </th>
-                            <td>
-                                
-                               200EGP
-                            </td>
-                            
-                        </tr>
-                        <hr style={{width:'140%'}}/>
-                        
-                        
-                        <tr>
-                            <th>
-                                Hour OF Work
-                            </th>
-                            <td>
-                                
-                              2pm-8pm
-                            </td>
-                        </tr>
-                        <hr style={{width:'140%'}}/>
-                        <tr>
-                            <th>
-                               Day1
-                            </th>
-                            <td>
-                                
-                               SaturDay
-                            </td>
-                        </tr>
-                        <hr style={{width:'140%'}}/>
-                        <tr>
-                            <th>
-                               Day2
-                            </th>
-                            <td>
-                                
-                               MonDay
-                            </td>
-                        </tr>
-                        <hr style={{width:'140%'}}/>
-                        <tr>
-                            <th>
-                               Day3
-                            </th>
-                            <td>
-                                
-                            Wednesday
-                            </td>
-                        </tr>
-                        <hr style={{width:'140%'}}/>
-                        
-                        
-                    </table>
-                </Card.Body>
-
-            </Card>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">address_detail</p>
+                                                    <h6 className="text-muted f-w-400"> {doc_data.address_detail}</h6>
+                                                </div>
 
 
-        </div>
+
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">Mobile</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.mobile}</h6>
+                                                </div>
+
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600"> bio</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.bio}</h6>
+                                                </div>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600"> BirthDate</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.birth_date}</h6>
+                                                </div>
+                                            </div>
+
+
+
+                                            <h4 className="m-b-20 m-t-40 p-b-5 b-b-default f-w-600" style={{ color: '#3B9AE1' }}>Booking Details </h4>
+                                            <div className="row">
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">Price</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.price}</h6>
+                                                </div>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">Hour OF Work</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.hour_of_work}</h6>
+                                                </div>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">Day1</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.day1_of_work}</h6>
+                                                </div>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">Day2</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.day2_of_work}</h6>
+                                                </div>
+                                                <div className="col-sm-6">
+                                                    <p className="m-b-10 f-w-600">Day3</p>
+                                                    <h6 className="text-muted f-w-400">{doc_data.day3_of_work}</h6>
+                                                </div>
+                                                
+                                            </div>
+                                            <ul class="social-link list-unstyled m-t-40 m-b-10">
+                                            <li><a href={doc_data.google} data-toggle="tooltip" data-placement="bottom" title="" data-original-title="facebook" data-abc="true">
+                                            <FontAwesomeIcon icon={faGoogle}/> </a> </li>
+                                            <li><a href={doc_data.twitter} data-toggle="tooltip" data-placement="bottom" title="" data-original-title="facebook" data-abc="true">
+                                            <FontAwesomeIcon icon={faTwitter}/></a></li>
+                                            <li><a href={doc_data.facebook} data-toggle="tooltip" data-placement="bottom" title="" data-original-title="facebook" data-abc="true">
+                                            <FontAwesomeIcon icon={faFacebook} /></a></li>                                            
+                                        </ul>
+
+
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+
+
 
 
 
