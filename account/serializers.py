@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-from account.models import Doctor
+from .models import Doctor
 
 
 
@@ -59,8 +59,20 @@ class RegisterProfileDoctor(serializers.ModelSerializer):
         model = Doctor
         # fields = '__all__'
         fields = ('bio','address','address_detail','birth_date','gender','user',
-                  'doctor','specialist_doctor','price','hour_of_work','day1_of_work',
+                  'doctor','specialist_doctor','price','from_of_work','to_of_work','day1_of_work',
                   'day2_of_work','day3_of_work','mobile','facebook','google',
                   'twitter',)
 
-# exclude
+
+class DoctorProfile(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = '__all__'
+
+
+class DoctorSerializer(serializers.ModelSerializer):
+    user=serializers.StringRelatedField()
+    class Meta:
+        model = Doctor
+        # fields = '__all__'
+        fields = ('user','doctor','specialist_doctor','image','bio',)
