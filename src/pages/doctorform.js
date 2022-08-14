@@ -335,7 +335,7 @@ function DoctorForm() {
 
     return (
         <div className='page'>
-            <Card style={{ height: '100%' }}>
+            <Card style={{ height: '80%' }}>
                 <table>
                     <tr>
                         <span>
