@@ -63,7 +63,7 @@ function DoctorForm() {
 
             setErrors({
                 ...errors,
-                userErr: e.target.value.length == 0 ?
+                userErr: e.target.value.length ==0 ?
                     'this filed is empty':
                     null
             })
@@ -312,7 +312,6 @@ function DoctorForm() {
                 .then((res) => {
                 console.log(res)
                 window.location.href = `/doctorprofile/${namedata}`
-
                 setUserData({
                     user: "",
                     bio: "",
@@ -351,6 +350,7 @@ function DoctorForm() {
     
    
 
+    console.log(userData)
     
     
 
@@ -467,7 +467,7 @@ function DoctorForm() {
                                  <br />
                                
                                     
-                                    <Form.Label htmlFor="hours">From hours</Form.Label>
+                                    <Form.Label htmlFor="hours">from hours</Form.Label>
                                     <Form.Control type="number" id="hours" placeholder="Enter hours" max='12' min='1' 
                                     name='from_of_work'
                                     value={userData.from_of_work}

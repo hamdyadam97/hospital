@@ -9,8 +9,9 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
+
 function Profile() {
-    
+
     let user = localStorage.getItem('user')
     const [doctorinfo, setdoctorinfo] = useState(false);
     const [workAddress, setworkAddress] = useState(false);
@@ -20,50 +21,50 @@ function Profile() {
     var doc_name = params.name
     const [doc_data, setdoc_data] = useState([]);
     useEffect(() => async () => {
-      await axios.get(`http://127.0.0.1:8000/doctordata/${doc_name}`)
- 
-             .then((res) => setdoc_data(res.data))
-             .catch((err) => console.log(err))
+        await axios.get(`http://127.0.0.1:8000/doctordata/${doc_name}`)
+
+            .then((res) => setdoc_data(res.data))
+            .catch((err) => console.log(err))
     }, [])
     console.log(doc_data.price)
-  
-    useEffect(() =>  {
 
-        if(doc_data.price){
-         window.paypal.Buttons({  
-            createOrder: (data, actions) => { 
-                
-                return actions.order.create({
+    useEffect(() => {
 
-                    purchase_units: [{
-                        amount: {
-                            value: doc_data.price
-                        }
-                    }] 
-                });
-            },
-            onApprove: (data, actions) => {
-                return actions.order.capture().then(details => {
-                    axios
-                        .post("http://127.0.0.1:8000/appointment/appointment/", {
-                            doctor: doc_name,
-                            patient: user
-                        })
-                        .then((res) => {
-                            console.log(res.data)
+        if (doc_data.price) {
+            window.paypal.Buttons({
+                createOrder: (data, actions) => {
 
-                        })
-                        .catch((err) => {
-                            console.log(err.response.data)
-                        });
+                    return actions.order.create({
 
-                    // alert ('Thanks For Paying dear ' + details.payer.name.given_name);
-                });
-            }
-        
-        }).render('#paypal-button-container')
+                        purchase_units: [{
+                            amount: {
+                                value: doc_data.price
+                            }
+                        }]
+                    });
+                },
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(details => {
+                        axios
+                            .post("http://127.0.0.1:8000/appointment/appointment/", {
+                                doctor: doc_name,
+                                patient: user
+                            })
+                            .then((res) => {
+                                console.log(res.data)
+
+                            })
+                            .catch((err) => {
+                                console.log(err.response.data)
+                            });
+
+                        // alert ('Thanks For Paying dear ' + details.payer.name.given_name);
+                    });
+                }
+
+            }).render('#paypal-button-container')
         }
-    },[doc_data.price])   
+    }, [doc_data.price])
 
 
     const imagepath = `http://127.0.0.1:8000${doc_data.image}`

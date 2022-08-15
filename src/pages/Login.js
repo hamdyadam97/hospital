@@ -41,14 +41,13 @@ function FormUser() {
         })
         .then((res) => {
             console.log(res)
-            localStorage.setItem('access_token', res.data.token.access)
-            let asd = localStorage.getItem('access_token')
-
             localStorage.setItem('user', values.username)
-            let asd1 = localStorage.getItem('user')
+            let asd = localStorage.getItem('user')
             
             console.log(asd)
-            window.location.href ='/patientform'
+            let name = localStorage.getItem('user')
+            console.log(name)
+            window.location.href =`/doctorform/${name}`
 
             
         })
