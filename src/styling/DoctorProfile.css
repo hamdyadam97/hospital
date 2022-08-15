@@ -25,7 +25,6 @@
 }
 .doctorimg{
     height: 70vh;
-    display: inline-block;
     width: 70%;
     border-radius: 50px;
     margin-left: 40px;
@@ -61,13 +60,11 @@
 
 }
 .prsone{
-    display: inline-block;
-    margin-bottom: 100px ;
+    
 }
 .doctorinfo{
     border-radius: 30px;
-    margin-left: 20px;
-    font-size:large;
+    font-size:medium;
 }
 .book{
     width: 100%;
