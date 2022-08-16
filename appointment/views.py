@@ -1,5 +1,7 @@
 import datetime
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_400_BAD_REQUEST
@@ -18,9 +20,9 @@ def rate(request, doctor):
         patient = request.data['patient']
         user = User.objects.get(username=patient)
         patient = Patient.objects.get(user=user)
-        appoint = Appointment.objects.filter(doctor=doctor,patient=patient)
+        appoint = Appointment.objects.filter(doctor=doctor, patient=patient)
         if appoint:
-            if appoint[0].date_appointment <= datetime.datetime.now().date():
+            if appoint[0].done:
                 serializer.save(doctor=doctor, patient=patient)
                 return Response({'msg': 'rate Success'}, status=HTTP_200_OK)
             else:
@@ -55,7 +57,7 @@ def make_appointment(request):
                 if day.strftime("%A") in day_of_work:
                     hour = len(doctor) * .5 + int(doctor_profile.from_of_work)
                     serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour)
-                    return Response({'msg': day.strftime("%A"),'hour': hour}, status=HTTP_200_OK)
+                    return Response({'msg': day.strftime("%A"),'hour': hour,'date':day}, status=HTTP_200_OK)
                 else:
                     day = day + datetime.timedelta(days=1)
                     continue
@@ -65,7 +67,7 @@ def make_appointment(request):
             else:
                 hour = len(doctor) * .5 + int(doctor_profile.from_of_work)
                 serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour)
-                return Response({'msg': day.strftime("%A"),'hour':hour}, status=HTTP_200_OK)
+                return Response({'msg': day.strftime("%A"),'hour':hour,'date':day}, status=HTTP_200_OK)
     else:
         return Response({'msg': 'erooo'}, status=HTTP_400_BAD_REQUEST)
 
@@ -88,12 +90,34 @@ def cancel_appointment(request, id):
             data = HistoryOfPatient(history, many=True)
             return Response(data=data.data, status=HTTP_200_OK)
         else:
-            return Response({'msg':'no appointment for you'}, status=HTTP_400_BAD_REQUEST)
+            return Response({'msg': 'no appointment for you'}, status=HTTP_400_BAD_REQUEST)
     else:
         return Response({'msg': 'cant delete this'}, status=HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+def send_note(request, id):
+    # id_appointment = request.data['id']
+    appointment = Appointment.objects.get(id=id)
+    email = appointment.patient.user.email
+    send_mail(
+        f'appointment with doctor {appointment.doctor} ',
+        f'we are very sorry  {appointment.patient}'
+        f' appointment with doctor {appointment.doctor} cancelled ',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+    Appointment.objects.filter(id=id).update(cancel=True)
+    return Response({"msg":"the appointment is cancelled"},status=HTTP_200_OK)
 
-
-
-
+@api_view(['GET'])
+def history_of_doctor(request, username):
+    user = User.objects.get(username=username)
+    doctor = Doctor.objects.get(user=user)
+    appointment_of_doctor = Appointment.objects.filter\
+        (doctor=doctor, done=False,cancel=False,date_appointment__gte=datetime.datetime.now().date())
+    data = HistoryOfPatient(appointment_of_doctor,many=True)
+    print(appointment_of_doctor[0].date_appointment)
+    print(datetime.datetime.now().date())
+    return Response(data=data.data, status=HTTP_200_OK)

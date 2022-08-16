@@ -6,5 +6,7 @@ urlpatterns = [
     path('appointment/', make_appointment, name='appointment'),
     path('history/<patient>', history_of_patient, name='history'),
     path('delete/<id>', cancel_appointment, name='history'),
+    path('cancel_appointment/<id>', send_note, name='send_note'),
+    path('historyofdoctor/<username>', history_of_doctor, name='historyofdoctor'),
 ]
  

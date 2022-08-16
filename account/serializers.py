@@ -54,7 +54,14 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class RegisterProfileDoctor(serializers.ModelSerializer):
-    user = serializers.CharField(max_length=20)
+    user = serializers.CharField(max_length=20,required=True)
+    price = serializers.IntegerField(required=True)
+    from_of_work = serializers.IntegerField(required=True)
+    to_of_work = serializers.IntegerField(required=True)
+    day1_of_work = serializers.CharField(max_length=20, required=True)
+    day2_of_work = serializers.CharField(max_length=20, required=True)
+    day3_of_work = serializers.CharField(max_length=20, required=True)
+
     class Meta:
         model = Doctor
         # fields = '__all__'
@@ -71,7 +78,7 @@ class DoctorProfile(serializers.ModelSerializer):
 
 
 class DoctorSerializer(serializers.ModelSerializer):
-    user=serializers.StringRelatedField()
+    user = serializers.StringRelatedField()
     class Meta:
         model = Doctor
         # fields = '__all__'
