@@ -9,6 +9,10 @@ from .models import Patient
 from .serializer import RegisterProfilePatient, PatientProfile
 
 
+from .models import Patient
+from .serializer import RegisterProfilePatient, PatientProfile
+
+
 @api_view(['GET'])
 def get_patient_data(request,username):
     user=User.objects.get(username=username)
@@ -29,3 +33,10 @@ def pateintprofile(request):
     else:
        return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
 
+
+@api_view(['GET'])
+def get_patient_data(request,username):
+    user=User.objects.get(username=username)
+    profile=Patient.objects.get(user=user)
+    pan=PatientProfile(profile)
+    return Response(data=pan.data,status=status.HTTP_200_OK)

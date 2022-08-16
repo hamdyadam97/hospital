@@ -1,15 +1,17 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer, LoginSerializer, RegisterProfileDoctor
+from .models import Doctor
+from .serializers import RegisterSerializer, LoginSerializer, RegisterProfileDoctor, DoctorProfile, DoctorSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from .renderers import UserRenderer
-app_name='account'
+app_name = 'account'
+
 
 def get_tokens_for_user(user):
   refresh = RefreshToken.for_user(user)
@@ -17,6 +19,7 @@ def get_tokens_for_user(user):
       'refresh': str(refresh),
       'access': str(refresh.access_token),
   }
+
 
 class RegisterUserAPIView(generics.CreateAPIView):
   permission_classes = (AllowAny,)
@@ -38,6 +41,7 @@ class RegisterUserAPIView(generics.CreateAPIView):
 #       return Response({'error': 'invalid data'}, status=HTTP_400_BAD_REQUEST)
 
 
+
 class UserLoginView(APIView):
   renderer_classes = [UserRenderer]
   def post(self, request, format=None):
@@ -48,20 +52,37 @@ class UserLoginView(APIView):
     user = authenticate(username=username, password=password)
     if user is not None:
       token = get_tokens_for_user(user)
-      return Response({'token':token, 'msg':'Login Success'}, status=status.HTTP_200_OK)
+      return Response({'token': token, 'msg': 'Login Success'}, status=status.HTTP_200_OK)
     else:
-      return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+      return Response({'errors': {'non_field_errors': ['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def doctorprofile(request):
     serializer = RegisterProfileDoctor(data=request.data)
+    print(serializer)
     if serializer.is_valid():
-        # username = serializer.data.get('user')
         username = serializer.validated_data['user']
         image = request.data['image']
         print(image)
         user = User.objects.get(username=username)
-        serializer.save(user=user,image=image)
-        return Response({'msg':'Login Success'}, status=status.HTTP_200_OK)
+        print (user)
+        serializer.save(user=user, image=image)
+        return Response({'msg': 'Login Success'}, status=status.HTTP_200_OK)
     else:
-       return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'errors': {'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def get_doctor_data(request, username):
+    user = User.objects.get(username=username)
+    profile = Doctor.objects.get(user=user)
+    doc=DoctorProfile(profile)
+    return Response(data=doc.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def doctor_view(request):
+        queryset = Doctor.objects.all()[0:3]
+        serializer_class = DoctorSerializer(queryset,many=True)
+        print(serializer_class)
+        # return Response(serializer_class.data)
+        return Response(data=serializer_class.data, status=status.HTTP_200_OK)
+
