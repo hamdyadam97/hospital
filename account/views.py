@@ -28,8 +28,6 @@ class RegisterUserAPIView(generics.CreateAPIView):
   serializer_class = RegisterSerializer
 
 
-
-
 class UserLoginView(APIView):
   renderer_classes = [UserRenderer]
   def post(self, request, format=None):
@@ -38,11 +36,12 @@ class UserLoginView(APIView):
     username = serializer.data.get('username')
     password = serializer.data.get('password')
     user = authenticate(username=username, password=password)
+    print(user)
     if user is not None:
-      token = get_tokens_for_user(user)
-      return Response({'token': token, 'msg': 'Login Success'}, status=status.HTTP_200_OK)
+        token = get_tokens_for_user(user)
+        return Response({'token': token, 'msg': 'Login Success'}, status=status.HTTP_200_OK)
     else:
-      return Response({'errors': {'non_field_errors': ['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'errors': {'non_field_errors': ['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def doctorprofile(request):
@@ -59,7 +58,7 @@ def doctorprofile(request):
                 return Response({'errors':['this is a doctor already with this name ']}, status=status.HTTP_404_NOT_FOUND)
             patient = Patient.objects.filter(user=user)
             if patient:
-               return Response({'errors': ['this is a patient  already with this name or email']},
+                return Response({'errors': ['this is a patient  already with this name or email']},
                          status=status.HTTP_404_NOT_FOUND)
             if 'image' in request.data:
                 image = request.data['image']

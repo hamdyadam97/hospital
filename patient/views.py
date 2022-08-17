@@ -51,7 +51,7 @@ def get_patient_data(request, username):
     if user:
         profile = Patient.objects.get(user=user[0])
         pan = PatientProfile(profile)
-        return Response(data=pan.data,status=status.HTTP_200_OK)
+        return Response(data=pan.data, status=status.HTTP_200_OK)
     else:
         return Response({'errors': {'non_field_errors': ['may be not user with name']}}, status=status.HTTP_404_NOT_FOUND)
 
