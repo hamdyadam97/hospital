@@ -118,6 +118,18 @@ def history_of_doctor(request, username):
     appointment_of_doctor = Appointment.objects.filter\
         (doctor=doctor, done=False,cancel=False,date_appointment__gte=datetime.datetime.now().date())
     data = HistoryOfPatient(appointment_of_doctor,many=True)
-    print(appointment_of_doctor[0].date_appointment)
-    print(datetime.datetime.now().date())
     return Response(data=data.data, status=HTTP_200_OK)
+@api_view(['GET'])
+def make_appointment_done(request, id):
+    appointment = Appointment.objects.get(id=id)
+    email = appointment.patient.user.email
+    send_mail(
+        f'appointment with doctor {appointment.doctor}',
+        f'appointment with doctor  {appointment.doctor}'
+        f' you can rate him  ',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+    Appointment.objects.filter(id=id).update(done=True)
+    return Response({"msg": "the appointment is done"}, status=HTTP_200_OK)

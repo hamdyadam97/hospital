@@ -72,6 +72,7 @@ class RegisterProfileDoctor(serializers.ModelSerializer):
 
 
 class DoctorProfile(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
     class Meta:
         model = Doctor
         fields = '__all__'
@@ -82,4 +83,4 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         # fields = '__all__'
-        fields = ('user','doctor','specialist_doctor','image','bio',)
+        fields = ('user','doctor','specialist_doctor','image','bio','avg')

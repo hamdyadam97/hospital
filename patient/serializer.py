@@ -3,7 +3,8 @@ from .models import Patient
 
 
 class RegisterProfilePatient(serializers.ModelSerializer):
-    user = serializers.CharField(max_length=20)
+    user = serializers.CharField(max_length=20,required=True)
+
     class Meta:
         model = Patient
         # fields = '__all__'
@@ -11,6 +12,7 @@ class RegisterProfilePatient(serializers.ModelSerializer):
 
 
 class PatientProfile(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
     class Meta:
         model = Patient
         fields = '__all__'

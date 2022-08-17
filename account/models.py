@@ -1,10 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.text import slugify
 
 
+Day = (
+    ('Saturday', 'Saturday'),
+    ('Sunday', 'Sunday'),
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+)
 choice = (
     ('female', 'female'),
     ('male', 'male'),
@@ -41,9 +48,9 @@ class Doctor(models.Model):
     price = models.IntegerField(" price", blank=True, null=True)
     from_of_work = models.IntegerField("from_of_work", blank=True, null=True)
     to_of_work = models.IntegerField("to_of_work", blank=True, null=True)
-    day1_of_work = models.CharField("day1_of_work", blank=True, null=True,max_length=20)
-    day2_of_work = models.CharField("day2_of_work", blank=True, null=True,max_length=20)
-    day3_of_work = models.CharField("day3_of_work", blank=True, null=True,max_length=20)
+    day1_of_work = models.CharField("day1_of_work", choices=Day, blank=True, null=True,max_length=20)
+    day2_of_work = models.CharField("day2_of_work", choices=Day, blank=True, null=True,max_length=20)
+    day3_of_work = models.CharField("day3_of_work", choices=Day, blank=True, null=True,max_length=20)
     mobile = models.CharField(" mobile", blank=True, null=True,max_length=11)
     facebook = models.CharField(max_length=100, blank=True, null=True)
     google = models.CharField(max_length=100, blank=True, null=True)
