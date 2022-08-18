@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'account.apps.AccountConfig',
+    'account',
     'rest_framework_simplejwt',
     'corsheaders',
     'rest_framework',
@@ -144,3 +144,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 CORS_ORIGIN_WHITELIST = [
      'http://localhost:3000'
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'carehospital841@gmail.com'
+EMAIL_HOST_PASSWORD = 'okbnbtwhjikpfyzp'
+EMAIL_USE_TLS = True
+EMAIL_PORT = '587'
+DEFAULT_FROM_EMAIL = 'default from email'

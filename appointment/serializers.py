@@ -26,3 +26,9 @@ class HistoryOfPatient(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = '__all__'
+
+
+class AverageRate(serializers.ModelSerializer):
+    class Meta:
+        model = Rate
+        fields = '__all__'

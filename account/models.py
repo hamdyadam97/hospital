@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.text import slugify
 
+
 choice = (
     ('female', 'female'),
     ('male', 'male'),
@@ -47,22 +48,17 @@ class Doctor(models.Model):
     facebook = models.CharField(max_length=100, blank=True, null=True)
     google = models.CharField(max_length=100, blank=True, null=True)
     twitter = models.CharField(max_length=100, blank=True, null=True)
-    image = models.ImageField(" image", upload_to="profile", null=True, blank=True)
+    avg = models.CharField(max_length=20,null=True, blank=True)
+    image = models.ImageField(" image", upload_to="profile", default="E:/GP/media/profile/l.jpg", null=True, blank=True)
     slug = models.SlugField("slug", blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.user.username)
         super(Doctor, self).save(*args, **kwargs)
+
     def __str__(self):
         return format(self.user)
 
-    # @receiver(post_save, sender=User)
-    # def create_user_profile(sender, instance, created, **kwargs):
-    #     if created:
-    #         Doctor.objects.create(user=instance)
-    #
-    # @receiver(post_save, sender=User)
-    # def save_user_profile(sender, instance, **kwargs):
-    #     instance.profile.save()
+
 
