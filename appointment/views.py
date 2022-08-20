@@ -83,7 +83,7 @@ def history_of_patient(request, patient):
     history = Patient.objects.get(user=user)
     history = Appointment.objects.filter(patient=history)
     data = HistoryOfPatient(history, many=True)
-    return Response({'data':data.data,'msg':'user'},status=HTTP_200_OK)
+    return Response(data=data.data,status=HTTP_200_OK)
 
 @api_view(['GET'])
 def cancel_appointment(request, id):
@@ -126,3 +126,17 @@ def history_of_doctor(request, username):
     # print(appointment_of_doctor[0].date_appointment)
     # print(datetime.datetime.now().date())
     return Response(data=data.data, status=HTTP_200_OK)
+@api_view(['GET'])
+def make_appointment_done(request, id):
+    appointment = Appointment.objects.get(id=id)
+    email = appointment.patient.user.email
+    send_mail(
+        f'appointment with doctor {appointment.doctor}',
+        f'appointment with doctor  {appointment.doctor}'
+        f' you can rate him  ',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+    Appointment.objects.filter(id=id).update(done=True)
+    return Response({"msg": "the appointment is done"}, status=HTTP_200_OK)

@@ -1,10 +1,24 @@
+from urllib import request
+
+from django.core.checks import messages
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.text import slugify
 
+from patient.models import Patient
 
+Day = (
+    ('Saturday', 'Saturday'),
+    ('Sunday', 'Sunday'),
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+)
 choice = (
     ('female', 'female'),
     ('male', 'male'),
@@ -30,7 +44,7 @@ DOCTOR_IN = (
 
 
 class Doctor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='doc')
     bio = models.TextField("bio",max_length=500, blank=True)
     address = models.CharField("country ", max_length=100, blank=True, null=True)
     address_detail = models.CharField("address_detail", max_length=100, blank=True, null=True)
@@ -41,9 +55,9 @@ class Doctor(models.Model):
     price = models.IntegerField(" price", blank=True, null=True)
     from_of_work = models.IntegerField("from_of_work", blank=True, null=True)
     to_of_work = models.IntegerField("to_of_work", blank=True, null=True)
-    day1_of_work = models.CharField("day1_of_work", blank=True, null=True,max_length=20)
-    day2_of_work = models.CharField("day2_of_work", blank=True, null=True,max_length=20)
-    day3_of_work = models.CharField("day3_of_work", blank=True, null=True,max_length=20)
+    day1_of_work = models.CharField("day1_of_work", choices=Day, blank=True, null=True,max_length=20)
+    day2_of_work = models.CharField("day2_of_work", choices=Day, blank=True, null=True,max_length=20)
+    day3_of_work = models.CharField("day3_of_work", choices=Day, blank=True, null=True,max_length=20)
     mobile = models.CharField(" mobile", blank=True, null=True,max_length=11)
     facebook = models.CharField(max_length=100, blank=True, null=True)
     google = models.CharField(max_length=100, blank=True, null=True)
@@ -53,6 +67,9 @@ class Doctor(models.Model):
     slug = models.SlugField("slug", blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        patient = Patient.objects.filter(user=self.user)
+        if patient:
+            return
         if not self.slug:
             self.slug = slugify(self.user.username)
         super(Doctor, self).save(*args, **kwargs)
@@ -62,3 +79,14 @@ class Doctor(models.Model):
 
 
 
+
+
+
+
+# @receiver(post_save, sender=Patient)
+# def create_doctor_patient(sender, instance, created, **kwargs):
+#     if created:
+#         doc = instance.user
+#         rates = Doctor.objects.filter(user=doc)
+#         if rates:
+#             instance.delete()

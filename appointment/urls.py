@@ -8,5 +8,6 @@ urlpatterns = [
     path('delete/<id>', cancel_appointment, name='history'),
     path('cancel_appointment/<id>', send_note, name='send_note'),
     path('historyofdoctor/<username>', history_of_doctor, name='historyofdoctor'),
+    path('done_appointment/<id>', make_appointment_done, name='historyofdoctor'),
 ]
  
