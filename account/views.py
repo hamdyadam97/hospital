@@ -63,6 +63,7 @@ def doctorprofile(request):
             if 'image' in request.data:
                 image = request.data['image']
                 serializer.save(user=user, image=image)
+                return Response({'msg': 'sign up is Success as doctor '}, status=status.HTTP_200_OK)
             else:
                 serializer.save(user=user)
             return Response({'msg': 'sign up is Success as doctor '}, status=status.HTTP_200_OK)

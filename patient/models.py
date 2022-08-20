@@ -7,7 +7,7 @@ choice = (
 
 
 class Patient(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_query_name='pat')
     age = models.IntegerField(blank=True, null=True)
     gender = models.CharField(blank=True, null=True, max_length=20, choices=choice)
     history = models.TextField(max_length=200, blank=True, null=True)
@@ -16,3 +16,10 @@ class Patient(models.Model):
 
     def __str__(self):
         return format(self.user)
+
+    def save(self, *args, **kwargs):
+        try:
+            if self.user.doc:
+                return
+        except:
+            super(Patient, self).save(*args, **kwargs)

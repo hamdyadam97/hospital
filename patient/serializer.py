@@ -8,11 +8,12 @@ class RegisterProfilePatient(serializers.ModelSerializer):
     class Meta:
         model = Patient
         # fields = '__all__'
-        fields = ('age','history','image','mobile','gender','user',)
+        fields = ('age', 'history', 'image', 'mobile', 'gender', 'user',)
 
 
 class PatientProfile(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+
     class Meta:
         model = Patient
         fields = '__all__'

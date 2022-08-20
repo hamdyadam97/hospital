@@ -6,9 +6,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_400_BAD_REQUEST
 from patient.models import Patient
-from .models import Appointment
+from .models import Appointment, Notification
 from account.models import Doctor
-from .serializers import DoctorRate, MakeAppointment, HistoryOfPatient
+from .serializers import DoctorRate, MakeAppointment, HistoryOfPatient, SendNotification
 
 
 @api_view(['POST'])
@@ -56,7 +56,7 @@ def make_appointment(request):
                 day_of_work.append(doctor_profile.day3_of_work)
                 if day.strftime("%A") in day_of_work:
                     hour = len(doctor) * .5 + int(doctor_profile.from_of_work)
-                    serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour)
+                    serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour,day=day.strftime("%A"))
                     return Response({'msg': day.strftime("%A"),'hour': hour,'date':day}, status=HTTP_200_OK)
                 else:
                     day = day + datetime.timedelta(days=1)
@@ -66,7 +66,7 @@ def make_appointment(request):
                 continue
             else:
                 hour = len(doctor) * .5 + int(doctor_profile.from_of_work)
-                serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour)
+                serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour,day=day.strftime("%A"))
                 return Response({'msg': day.strftime("%A"),'hour':hour,'date':day}, status=HTTP_200_OK)
     else:
         return Response({'msg': 'erooo'}, status=HTTP_400_BAD_REQUEST)
@@ -78,7 +78,7 @@ def history_of_patient(request, patient):
     history = Patient.objects.get(user=user)
     history = Appointment.objects.filter(patient=history)
     data = HistoryOfPatient(history, many=True)
-    return Response({'data':data.data,'msg':'user'},status=HTTP_200_OK)
+    return Response(data=data.data,status=HTTP_200_OK)
 
 @api_view(['GET'])
 def cancel_appointment(request, id):
@@ -97,7 +97,6 @@ def cancel_appointment(request, id):
 
 @api_view(['GET'])
 def send_note(request, id):
-    # id_appointment = request.data['id']
     appointment = Appointment.objects.get(id=id)
     email = appointment.patient.user.email
     send_mail(
@@ -109,6 +108,8 @@ def send_note(request, id):
         fail_silently=False,
     )
     Appointment.objects.filter(id=id).update(cancel=True)
+    Notification.objects.create(app=appointment,msg=f'appointment cancelled by doc'
+                                                    f' {appointment.doctor}',owner=appointment.patient.user.username)
     return Response({"msg":"the appointment is cancelled"},status=HTTP_200_OK)
 
 @api_view(['GET'])
@@ -116,9 +117,11 @@ def history_of_doctor(request, username):
     user = User.objects.get(username=username)
     doctor = Doctor.objects.get(user=user)
     appointment_of_doctor = Appointment.objects.filter\
-        (doctor=doctor, done=False,cancel=False,date_appointment__gte=datetime.datetime.now().date())
-    data = HistoryOfPatient(appointment_of_doctor,many=True)
+        (doctor=doctor, done=False, cancel=False, date_appointment__gte=datetime.datetime.now().date())
+    data = HistoryOfPatient(appointment_of_doctor, many=True)
     return Response(data=data.data, status=HTTP_200_OK)
+
+
 @api_view(['GET'])
 def make_appointment_done(request, id):
     appointment = Appointment.objects.get(id=id)
@@ -132,4 +135,14 @@ def make_appointment_done(request, id):
         fail_silently=False,
     )
     Appointment.objects.filter(id=id).update(done=True)
+    Notification.objects.create(app=appointment, msg=f'appointment done by doc'
+                                                     f' {appointment.doctor}',owner=appointment.patient.user.username)
     return Response({"msg": "the appointment is done"}, status=HTTP_200_OK)
+
+
+@api_view(['GET'])
+def send_notification(request,username):
+    noti = Notification.objects.filter(owner=username, read=False)
+    cont = noti.count()
+    data = SendNotification(noti, many=True)
+    return Response({'data':data.data, 'cnt':cont}, status=HTTP_200_OK)

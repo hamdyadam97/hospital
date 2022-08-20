@@ -147,8 +147,11 @@ CORS_ORIGIN_WHITELIST = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = 'hamdyadam543@gmail.com'
+EMAIL_HOST_PASSWORD = 'ndxhufbznnedfspm'
+# EMAIL_HOST_USER = 'carehospital841@gmail.com'
+# EMAIL_HOST_PASSWORD = 'okbnbtwhjikpfyzp'
+
 EMAIL_USE_TLS = True
 EMAIL_PORT = '587'
 DEFAULT_FROM_EMAIL = 'default from email'
