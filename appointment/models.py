@@ -25,7 +25,6 @@ class Rate(models.Model):
     rate = models.CharField(blank=True, null=True, max_length=20)
     notes = models.TextField(max_length=500, blank=True, null=True)
 
-
     def __str__(self):
         return format(self.doctor)
 
@@ -56,4 +55,4 @@ class Notification(models.Model):
 @receiver(post_save, sender=Appointment)
 def create_notification_appointment(sender, instance, created, **kwargs):
     if created:
-        Notification.objects.create(app=instance, msg=f'appointment created by patient {instance.patient}',owner=instance.patient)
+        Notification.objects.create(app=instance, msg=f'appointment created by patient {instance.patient}',owner=instance.doctor)

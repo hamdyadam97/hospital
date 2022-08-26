@@ -4,8 +4,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-from .models import Doctor
-
+from .models import Doctor, ISActive
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -84,3 +83,16 @@ class DoctorSerializer(serializers.ModelSerializer):
         model = Doctor
         # fields = '__all__'
         fields = ('user','doctor','specialist_doctor','image','bio','avg')
+
+
+class UpdateProfileDoctor(serializers.ModelSerializer):
+    # user = serializers.CharField(max_length=20, required=True)
+    class Meta:
+        model = Doctor
+        fields = ['bio', 'address', 'address_detail', 'mobile', 'price','image',]
+
+
+class CreateNumberActive(serializers.ModelSerializer):
+    class Meta:
+        model = ISActive
+        fields = ['num_verify']
