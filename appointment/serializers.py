@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from appointment.models import Rate, Appointment
+from appointment.models import Rate, Appointment, Notification
 
 
 class DoctorRate(serializers.ModelSerializer):
@@ -7,7 +7,7 @@ class DoctorRate(serializers.ModelSerializer):
 
     class Meta:
         model = Rate
-        fields = ('rate',)
+        fields = ('rate','notes')
 
 
 class MakeAppointment(serializers.ModelSerializer):
@@ -31,4 +31,10 @@ class HistoryOfPatient(serializers.ModelSerializer):
 class AverageRate(serializers.ModelSerializer):
     class Meta:
         model = Rate
+        fields = '__all__'
+
+
+class SendNotification(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
         fields = '__all__'

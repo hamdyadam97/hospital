@@ -6,5 +6,9 @@ urlpatterns = [
     path('createprofiledoctor/', doctorprofile, name='createprofiledoctor'),
     path('doctordata/<username>', get_doctor_data, name='get_doctor_data'),
     path('api/', doctor_view, name='doctor_view'),
+    path('updateprofile/', update_profile_doctor, name='updateprofile'),
+    path('sendnumbertoverify/<username>', create_verify_num, name='sendnumbertoverify'),
+    path('numbertoverify/<username>', verify_num, name='numbertoverify'),
+
 
 ]

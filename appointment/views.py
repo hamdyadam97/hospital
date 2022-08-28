@@ -6,76 +6,93 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_400_BAD_REQUEST
 from patient.models import Patient
-from .models import Appointment
+from .models import Appointment, Notification
 from account.models import Doctor
-from .serializers import DoctorRate, MakeAppointment, HistoryOfPatient
+from .serializers import DoctorRate, MakeAppointment, HistoryOfPatient, SendNotification
 
 
 @api_view(['POST'])
 def rate(request, doctor):
     serializer = DoctorRate(data=request.data)
+    print(serializer)
     if serializer.is_valid():
-        user = User.objects.get(username=doctor)
-        doctor = Doctor.objects.get(user=user)
-        patient = request.data['patient']
-        user = User.objects.get(username=patient)
-        patient = Patient.objects.get(user=user)
-        appoint = Appointment.objects.filter(doctor=doctor, patient=patient)
-        if appoint:
-            if appoint[0].done:
-                serializer.save(doctor=doctor, patient=patient)
-                return Response({'msg': 'rate Success'}, status=HTTP_200_OK)
+        user = User.objects.filter(username=doctor)
+        if user:
+            doctor = Doctor.objects.get(user=user[0])
+            if 'patient' in request.data:
+                patient = request.data['patient']
+                user = User.objects.filter(username=patient)
+                if user:
+                    patient = Patient.objects.get(user=user[0])
+                    appoint = Appointment.objects.filter(doctor=doctor, patient=patient)
+                    if appoint:
+                        for app in appoint:
+                            if app.done:
+                                serializer.save(doctor=doctor, patient=patient)
+                                return Response({'msg': 'Rate Success'}, status=HTTP_200_OK)
+                            return Response({'msg': ' No can rate this doctor until appointment done '}, status=HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response({'msg': ''' You can't rate this doc you no have appoint with doctor'''}, status=HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'msg': 'No patient with name that enter'}, status=HTTP_404_NOT_FOUND)
             else:
-                return Response({'msg': ' no can rate this doctor appointment no yet'}, status=HTTP_400_BAD_REQUEST)
+                return Response({'msg': 'Plz enter name of patient'}, status=HTTP_400_BAD_REQUEST)
         else:
-            return Response({'msg': ' you canit rate this doc'}, status=HTTP_400_BAD_REQUEST)
+            return Response({'msg': '''No user with this name '''}, status=HTTP_400_BAD_REQUEST)
     else:
-        return Response({'msg':' no can rate this doctor'}, status=HTTP_400_BAD_REQUEST)
-
+        return Response({'msg': '''Data Dosent right , You Must Give The Rate'''}, status=HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def make_appointment(request):
     serializer = MakeAppointment(data=request.data)
     if serializer.is_valid():
-        print(serializer)
         appointment = True
-        name_doctor = request.data['doctor']
-        name_patient = request.data['patient']
-        user = User.objects.get(username=name_doctor)
-        doctor_profile = Doctor.objects.get(user=user)
-        patient = User.objects.get(username=name_patient)
-        patient = Patient.objects.get(user=patient)
-        day = datetime.datetime.now().date()
-        print(doctor_profile)
-        print(patient)
-        while appointment:
-            day_of_work = []
-            doctor = Appointment.objects.filter(doctor=doctor_profile, date_appointment=day)
-            if len(doctor) == 0:
-                day_of_work.append(doctor_profile.day1_of_work)
-                day_of_work.append(doctor_profile.day2_of_work)
-                day_of_work.append(doctor_profile.day3_of_work)
-                if day.strftime("%A") in day_of_work:
-                    hour = len(doctor) * .5 + int(doctor_profile.from_of_work)
-                    serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour,day=day.strftime("%A"))
-                    return Response({'msg': day.strftime("%A"),'hour': hour}, status=HTTP_200_OK)
-                    serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour)
-                    return Response({'msg': day.strftime("%A"),'hour': hour,'date':day}, status=HTTP_200_OK)
-                else:
-                    day = day + datetime.timedelta(days=1)
-                    continue
-            if len(doctor) == (doctor_profile.to_of_work-doctor_profile.from_of_work)*2:
-                day = day + datetime.timedelta(days=1)
-                continue
-            else:
-                hour = len(doctor) * .5 + int(doctor_profile.from_of_work)
-                serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour,day=day.strftime("%A"))
-                return Response({'msg': day.strftime("%A"),'hour':hour}, status=HTTP_200_OK)
-                serializer.save(doctor=doctor_profile, patient=patient, date_appointment=day,hour=hour)
-                return Response({'msg': day.strftime("%A"),'hour':hour,'date':day}, status=HTTP_200_OK)
-    else:
-        return Response({'msg': 'erooo'}, status=HTTP_400_BAD_REQUEST)
+        if 'doctor' in request.data and 'patient' in request.data:
+            name_doctor = request.data['doctor']
+            name_patient = request.data['patient']
+            user = User.objects.filter(username=name_doctor)
+            if user:
+                doctor_profile = Doctor.objects.filter(user=user[0])
+                if doctor_profile:
+                    patient = User.objects.filter(username=name_patient)
+                    if patient:
+                        patient = Patient.objects.filter(user=patient[0])
+                        if patient:
+                            day = datetime.datetime.now().date()
+                            while appointment:
+                                day_of_work = []
+                                doctor = Appointment.objects.filter(doctor=doctor_profile[0], date_appointment=day)
+                                if len(doctor) == 0:
+                                    day_of_work.append(doctor_profile[0].day1_of_work)
+                                    day_of_work.append(doctor_profile[0].day2_of_work)
+                                    day_of_work.append(doctor_profile[0].day3_of_work)
+                                    if day.strftime("%A") in day_of_work:
+                                        hour = len(doctor) * .5 + int(doctor_profile[0].from_of_work)
+                                        serializer.save(doctor=doctor_profile[0], patient=patient[0], date_appointment=day,hour=hour,day=day.strftime("%A"))
+                                        return Response({'msg': day.strftime("%A"),'hour': hour,'date':day}, status=HTTP_200_OK)
+                                    else:
+                                        day = day + datetime.timedelta(days=1)
+                                        continue
+                                if len(doctor) == (doctor_profile[0].to_of_work-doctor_profile[0].from_of_work)*2:
+                                    day = day + datetime.timedelta(days=1)
+                                    continue
+                                else:
+                                    hour = len(doctor) * .5 + int(doctor_profile[0].from_of_work)
+                                    serializer.save(doctor=doctor_profile[0], patient=patient[0], date_appointment=day,hour=hour,day=day.strftime("%A"))
+                                    return Response({'msg':f'Your Appoinment In {day.strftime("%A")} Day', 'hour': f' {hour} PM' , 'date': day }, status=HTTP_200_OK)
+                        else:
+                            return Response({'msg': 'No profile patient '}, status=HTTP_400_BAD_REQUEST)
 
+                    else:
+                        return Response({'msg': 'No patient with name'}, status=HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'msg': 'No doctor with name'}, status=HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'msg': 'No account doctor with name'}, status=HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'msg': 'Patient name plz or doctor'}, status=HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'msg': 'Error in data'}, status=HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def history_of_patient(request, patient):
@@ -95,14 +112,13 @@ def cancel_appointment(request, id):
             data = HistoryOfPatient(history, many=True)
             return Response(data=data.data, status=HTTP_200_OK)
         else:
-            return Response({'msg': 'no appointment for you'}, status=HTTP_400_BAD_REQUEST)
+            return Response({'msg': 'No appointment for you appoint is cancelled'}, status=HTTP_400_BAD_REQUEST)
     else:
-        return Response({'msg': 'cant delete this'}, status=HTTP_400_BAD_REQUEST)
+        return Response({'msg': 'Cant delete this appointment'}, status=HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
 def send_note(request, id):
-    # id_appointment = request.data['id']
     appointment = Appointment.objects.get(id=id)
     email = appointment.patient.user.email
     send_mail(
@@ -114,7 +130,9 @@ def send_note(request, id):
         fail_silently=False,
     )
     Appointment.objects.filter(id=id).update(cancel=True)
-    return Response({"msg":"the appointment is cancelled"},status=HTTP_200_OK)
+    Notification.objects.create(app=appointment,msg=f'appointment cancelled by doc'
+                                                    f' {appointment.doctor}',owner=appointment.patient.user.username)
+    return Response({"msg":"The Appointment is Cancelled"},status=HTTP_200_OK)
 
 @api_view(['GET'])
 def history_of_doctor(request, username):
@@ -125,7 +143,11 @@ def history_of_doctor(request, username):
     data = HistoryOfPatient(appointment_of_doctor,many=True)
     # print(appointment_of_doctor[0].date_appointment)
     # print(datetime.datetime.now().date())
+
+    data = HistoryOfPatient(appointment_of_doctor, many=True)
     return Response(data=data.data, status=HTTP_200_OK)
+
+
 @api_view(['GET'])
 def make_appointment_done(request, id):
     appointment = Appointment.objects.get(id=id)
@@ -139,4 +161,25 @@ def make_appointment_done(request, id):
         fail_silently=False,
     )
     Appointment.objects.filter(id=id).update(done=True)
-    return Response({"msg": "the appointment is done"}, status=HTTP_200_OK)
+    Notification.objects.create(app=appointment, msg=f'appointment done by doc'
+                                                     f' {appointment.doctor}',owner=appointment.patient.user.username)
+    return Response({"msg": "The Appointment is Done"}, status=HTTP_200_OK)
+
+
+
+@api_view(['GET'])
+def send_notification(request,username):
+    noti = Notification.objects.filter(owner=username, read=False)
+    cont = noti.count()
+    data = SendNotification(noti, many=True)
+    print(cont)
+    return Response({'cnt':cont}, status=HTTP_200_OK)
+
+@api_view(['GET'])
+def display_notification(requset,username):
+    notis = Notification.objects.filter(owner=username).order_by('-id')
+    data = SendNotification(notis, many=True)
+    for noti in notis:
+        Notification.objects.filter(id=noti.id).update(read=True)
+    print(data.data)
+    return Response(data = data.data, status=HTTP_200_OK)

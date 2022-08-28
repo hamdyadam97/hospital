@@ -1,3 +1,4 @@
+import datetime
 from urllib import request
 
 from django.core.checks import messages
@@ -7,6 +8,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.text import slugify
+from dateutil.relativedelta import relativedelta
+
 
 from patient.models import Patient
 
@@ -80,6 +83,19 @@ class Doctor(models.Model):
 
 
 
+class ISActive(models.Model):
+    user_active = models.OneToOneField(User,on_delete=models.CASCADE,related_name='active_user')
+    is_active = models.BooleanField("is_active", blank=True, null=False, default=False)
+    num_verify = models.IntegerField("num_verify", blank=True, null=True)
+    created_date = models.DateTimeField(auto_now=True)
+    expire_date = models.DateTimeField(null=True, blank=True,max_length=50)
+
+    def save(self,*args, **kwargs):
+        self.expire_date = datetime.datetime.now(datetime.timezone.utc)+relativedelta(minutes=5)
+        super(ISActive, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return format(self.user_active)
 
 
 

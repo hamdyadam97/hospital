@@ -9,5 +9,8 @@ urlpatterns = [
     path('cancel_appointment/<id>', send_note, name='send_note'),
     path('historyofdoctor/<username>', history_of_doctor, name='historyofdoctor'),
     path('done_appointment/<id>', make_appointment_done, name='historyofdoctor'),
+    path('send_notification/<username>', send_notification, name='send_notification'),
+    path('display_notification/<username>', display_notification, name='display_notification'),
+
 ]
  

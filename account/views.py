@@ -1,17 +1,28 @@
+import datetime
+import random
+from django.utils.timezone import utc
+
+from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.core.mail import send_mail
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework.views import APIView
 
+
 from patient.models import Patient
-from .models import Doctor
-from .serializers import RegisterSerializer, LoginSerializer, RegisterProfileDoctor, DoctorProfile, DoctorSerializer
+from .models import Doctor, ISActive
+from .serializers import RegisterSerializer, LoginSerializer, RegisterProfileDoctor, DoctorProfile, DoctorSerializer, \
+    UpdateProfileDoctor, CreateNumberActive
 from rest_framework_simplejwt.tokens import RefreshToken
 from .renderers import UserRenderer
+
+
 app_name = 'account'
 
 
@@ -36,30 +47,38 @@ class UserLoginView(APIView):
     username = serializer.data.get('username')
     password = serializer.data.get('password')
     user = authenticate(username=username, password=password)
-    print(user)
     if user is not None:
-        token = get_tokens_for_user(user)
-        return Response({'token': token, 'msg': 'Login Success'}, status=status.HTTP_200_OK)
+        us = User.objects.get(username=username)
+        if not us.is_staff:
+            token = get_tokens_for_user(user)
+            doc = Doctor.objects.filter(user=us)
+            pat = Patient.objects.filter(user=us)
+            if doc:
+                return Response({'token': token, 'msg': 'Login Success','doc':"doctor"}, status=status.HTTP_200_OK)
+            if pat:
+                return Response({'token': token, 'msg': 'Login Success','doc':"patient"}, status=status.HTTP_200_OK)
+        else:
+            return Response({'errors': 'may your ara admin'}, status=status.HTTP_404_NOT_FOUND)
+
     else:
-        return Response({'errors': {'non_field_errors': ['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'errors': 'Email or Password is not Valid'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def doctorprofile(request):
     serializer = RegisterProfileDoctor(data=request.data)
     if serializer.is_valid():
-        print(serializer)
         if 'user' in request.data:
             username = serializer.validated_data['user']
             user = User.objects.get(username=username)
             if user.is_superuser or user.is_staff:
-                return Response({'errors': {'non_field_errors': ['you are admin not be a doctor']}},
+                return Response({'errors':  'you are admin not be a doctor'},
                                 status=status.HTTP_404_NOT_FOUND)
             doctor = Doctor.objects.filter(user=user)
             if doctor:
-                return Response({'errors':['this is a doctor already with this name ']}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'errors':'This is a doctor already with this name '}, status=status.HTTP_404_NOT_FOUND)
             patient = Patient.objects.filter(user=user)
             if patient:
-                return Response({'errors': ['this is a patient  already with this name or email']},
+                return Response({'errors': 'This is a patient  already with this name or email'},
                          status=status.HTTP_404_NOT_FOUND)
             if 'image' in request.data:
                 image = request.data['image']
@@ -71,7 +90,7 @@ def doctorprofile(request):
         else:
             return Response({'msg':'must login in your account'})
     else:
-        return Response({'errors': {'non_field_errors':['some of data may be not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'errors': 'some of data may be not Valid'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def get_doctor_data(request, username):
@@ -91,4 +110,71 @@ def doctor_view(request):
         queryset = Doctor.objects.all()
         serializer_class = DoctorSerializer(queryset,many=True)
         return Response(data=serializer_class.data, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+def update_profile_doctor(request):
+    if 'user' in request.data:
+        user = User.objects.filter(username=request.data['user'])
+        if user:
+            doc = Doctor.objects.filter(user=user[0])[0]
+            profile = UpdateProfileDoctor(doc, data=request.data)
+            if profile.is_valid():
+                profile.save()
+                return Response({'msg': 'successful update profile doctor'}, status=HTTP_200_OK)
+            else:
+                return Response({'msg': 'Please Enter Data'}, status=HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'msg': 'Please Enter Data'}, status=HTTP_400_BAD_REQUEST)
+
+    else:
+        return Response({'msg': 'Please enter data valid'}, status=HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def create_verify_num(requset,username):
+    n = random.randint(1000, 9999)
+    user = User.objects.get(username=username)
+    email = user.email
+    numver=ISActive.objects.filter(user_active=user)
+    if numver :
+        ISActive.objects.filter(user_active=user).update(num_verify= n,expire_date=datetime.datetime.now(datetime.timezone.utc) + relativedelta(minutes=5) )
+        send_mail(
+            f'you can verify email',
+            f'appointment with doctor{n}',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+    else:
+
+        send_mail(
+            f'you can verify email',
+            f'appointment with doctor{n}',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+        ISActive.objects.create(user_active=user, num_verify=n)
+    return Response({'number': n}, status=HTTP_200_OK)
+
+
+@api_view(['PUT'])
+def verify_num(request,username):
+    user = User.objects.get(username=username)
+    isactive = ISActive.objects.get(user_active=user)
+    active = CreateNumberActive(isactive, data=request.data)
+    # datee= datetime.datetime.now(datetime.timezone.utc)+relativedelta(minutes=5)
+
+    if active.is_valid():
+        print(request.data['num'])
+        print(isactive.expire_date)
+        print(datetime.datetime.now(datetime.timezone.utc))
+
+        if isactive.num_verify == int(request.data['num']) and isactive.expire_date >= (datetime.datetime.now(datetime.timezone.utc)):
+            active.save(is_active=True)
+            return Response({'msg':'congratulations'},status=HTTP_200_OK)
+        else:
+            return Response({'msg': 'num no  right'}, status=HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'msg': 'not valid data'}, status=HTTP_400_BAD_REQUEST)
+
 
