@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from 'react-bootstrap/Card';
 import '../styling/History.css'
 import Button from 'react-bootstrap/Button';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -54,7 +54,9 @@ function DoctorProfile() {
                                             </div>
                                             <h3 className="f-w-600">Dr.{doc_name}</h3>
                                             <p>{doc_data.specialist_doctor}</p>
-                                            <Button className='btn btn-primary' >Edit Profile</Button>
+                                            <Button className='btn btn-primary' >
+                                            <Link to={`/doctorupdate/${namedata}`} style={{color:'white',textDecoration: 'none'}}>Edit Profile</Link>
+                                            </Button>
                                             <div>
                                                 <br />
                                                 <h4 className="m-b-20 p-b-5 b-b-default f-w-600">More Information</h4>
@@ -71,10 +73,6 @@ function DoctorProfile() {
                                                 </div>
 
                                                 
-
-
-                                
-
                             
                                             </div>
 
@@ -125,7 +123,7 @@ function DoctorProfile() {
                                                 </div>
                                                 <div className="col-sm-6">
                                                     <p className="m-b-10 f-w-600">Hour OF Work</p>
-                                                    <h6 className="text-muted f-w-400">{doc_data.hour_of_work}</h6>
+                                                    <h6 className="text-muted f-w-400">{doc_data.from_of_work}pm, {doc_data.to_of_work}pm</h6>
                                                 </div>
                                                 <div className="col-sm-6">
                                                     <p className="m-b-10 f-w-600">Day1</p>
@@ -150,6 +148,12 @@ function DoctorProfile() {
                                             <FontAwesomeIcon icon={faFacebook} /></a></li>                                            
                                         </ul>
 
+                                            <Button className='btn btn-primary' >
+                                            <Link to='/appointment' style={{color:'white',textDecoration: 'none'}}>Go To Appointment</Link>
+                                            </Button>
+
+                                            
+                                            
 
                                         </div>
                                     </div>
@@ -177,4 +181,3 @@ function DoctorProfile() {
 
     )
 } export default DoctorProfile;
-

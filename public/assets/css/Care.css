@@ -4,7 +4,7 @@
   --main-color: #2196f3;
   --main-color-alt: #1787e0;
   --main-transition: 0.3s;
-  --main-padding-top: 100px;
+  --main-padding-top: 150px;
   --main-padding-bottom: 100px;
   --section-background: #ececec;
 }
@@ -111,13 +111,13 @@ a {
 }
 .spikes::after {
   content: "";
-  position: absolute;
+  /* position: absolute; */
   right: 0;
-  width: 100%;
-  height: 30px;
+  /* width: 100%;
+  height: 30px; */
   z-index: 1;
-  background-image: linear-gradient(135deg, white 25%, transparent 25%),
-    linear-gradient(225deg, white 25%, transparent 25%);
+  /* background-image: linear-gradient(135deg, white 25%, transparent 25%),
+    linear-gradient(225deg, white 25%, transparent 25%); */
   background-size: 30px 30px;
 }
 .dots {
@@ -1317,7 +1317,7 @@ a {
 /* Start Footer */
 .footer {
   background-color: #191919;
-  padding: 70px 0 0;
+  padding: 20px;
 }
 @media (max-width: 767px) {
   .footer {
@@ -1436,8 +1436,8 @@ a {
 }
 /* End Footer */
 .logo1{
-  width: 83px;
-    height: 80px;
+  width: 63px;
+    height: 63px;
   margin-right: 169px;
   margin-left: -75px;
 }

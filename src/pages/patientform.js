@@ -1,10 +1,8 @@
-// import Card from 'react-bootstrap/Card';
-// import axios from 'axios';
-// import logo from '../image/profile.jpg';
-// import Button from 'react-bootstrap/Button';
+
 import '../styling/patientform.css'
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
+import axios from 'axios';
 
 
 
@@ -46,9 +44,9 @@ function PatientForm() {
             setErrors({
                 ...errors,
                 ageErr: e.target.value.length === 0 ?
-                    "This Field Is Requied" :
-                    null
-            })
+                    "This Field Is Requied" :  e.target.value > 90 ?
+                    'Invalid Number' :null
+                })
         }
 
 
@@ -58,12 +56,12 @@ function PatientForm() {
                 gender: e.target.value,
             })
 
-            setErrors({
-                ...errors,
-                genderErr: e.target.value.length === 0 ?
-                    "This Field Is Requied" :
-                    null
-            })
+            // setErrors({
+            //     ...errors,
+            //     genderErr: e.target.value === '' ?
+            //         "This Field Is Requied" :
+            //         null
+            // })
         }
 
         if (e.target.name === 'history') {
@@ -75,8 +73,8 @@ function PatientForm() {
             setErrors({
                 ...errors,
                 historyErr: e.target.value.length === 0 ?
-                    "This Field Is Requied" :
-                    null
+                    "This Field Is Requied" : e.target.value.length < 50 ?
+                    'You must enter 50 char' : null
             })
         }
 
@@ -88,7 +86,7 @@ function PatientForm() {
 
             setErrors({
                 ...errors,
-                mobileErr: e.target.value.length < 11 ?
+                mobileErr: e.target.value.length < 11 || e.target.value.length >11 ?
                     "This shoud have 11 numbers" :
                     null
             })
@@ -104,7 +102,7 @@ function PatientForm() {
     }
     
     
-    const submitData = (e) => {
+    const submitData = async  (e) => {
     const uploadData = new FormData()
     console.log('jjjjjjjjjjjjj')
     uploadData.append('user', namedata);
@@ -117,23 +115,12 @@ function PatientForm() {
 
         
         e.preventDefault();
-        fetch('http://127.0.0.1:8000/patient/createpateintprofile', {
-        method: 'POST',
-        body: uploadData
+      await axios( {
+        method:'post',
+        url:'http://127.0.0.1:8000/patient/createpateintprofile',
+        data: uploadData
     })
 
-
-        // axios
-        // .post("http://127.0.0.1:8000/patient/createpateintprofile", {
-        //     // user: namedata,
-        //     // age: userData.age,
-        //     // gender: userData.gender,
-        //     // history: userData.history,
-        //     // mobile: userData.mobile,
-        //     // image: userData.image,
-        //     body:formdata
-            
-        // })
 
 
         .then((res) => {
@@ -148,14 +135,18 @@ function PatientForm() {
              
 
             });
-            console.log(userData.image)
+            // console.log(userData.image)
             // window.location.href ='/login'
 
         })
             
             .catch((err) => {
-                console.log(err.response.data)
+                setErrors({
+                    ...errors,
+                    genderErr:
+                    err.response.data.errors
 
+                })
             });
     }
 
@@ -168,10 +159,11 @@ function PatientForm() {
                     <div className="row">
                         <div className="col-md-3 border-right">
                             <div className="d-flex flex-column align-items-center text-center p-3 py-5">
-                                <img className="rounded-circle mt-5" width="150px"
+                                <img className="rounded-circle mt-5" width="150px" style={{marginTop:'20px'}}
                                     src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt='NO img' />
-                                <span className="font-weight-bold">Ahmed Hassan</span>
-                                <span className="text-black-50">Ahmed@mail.com.my</span><span> </span></div>
+                             
+                             
+                                </div>
                         </div>
                         <div className="col-md-5 border-right">
                             <div className="p-3 py-5">
@@ -211,8 +203,9 @@ function PatientForm() {
                                             <option>Gender</option>
                                             <option value="male">Male</option>
                                             <option value="female">Female</option>
-
+                                        
                                         </Form.Select>
+
                                     </div>
 
                                     <div className="col-md-12">
@@ -236,11 +229,12 @@ function PatientForm() {
                                         <br />
                                     </div>
 
+                                    <p className="text-danger" style={{fontSize:'20px' }}> {errors.genderErr} </p>
 
                                     <div className="mt-5 text-center"><button className="btn btn-primary profile-button"
                                         type="submit"
 
-                                        disabled={errors.ageErr || errors.mobileErr || errors.genderErr || errors.historyErr}
+                                        disabled={errors.ageErr || errors.mobileErr  || errors.historyErr}
                                     >Save Profile</button>
                                     </div>
                                 </form>

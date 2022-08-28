@@ -7,9 +7,11 @@ import axios from "axios";
 
 
 function FormUser() {
+
     let access_token = localStorage.getItem('access_token')
     const validate = values => {
         const errors = {};
+
         if (!values.username) {
             errors.username = 'Required';
         
@@ -27,6 +29,11 @@ function FormUser() {
         setIsSHown((isShown) => !isShown);
     };
 
+    const [errors, setErrors] = useState({
+        validateErr: null,
+      
+    })
+
     const formik = useFormik({
         initialValues: {
             username: '',
@@ -41,18 +48,31 @@ function FormUser() {
         })
         .then((res) => {
             console.log(res)
+            localStorage.setItem('doc',res.data.doc)
+            
+            console.log(res.data.doc)
             localStorage.setItem('user', values.username)
             let asd = localStorage.getItem('user')
             
             console.log(asd)
             let name = localStorage.getItem('user')
             console.log(name)
-            window.location.href =`/doctorform/${name}`
+            window.location.href =`/AllDoctors`
 
             
         })
         .catch((err) => {
-            console.log(err.response.data)
+          
+                setErrors({
+                    ...errors,
+                    validateErr:
+                    err.response.data.errors
+
+                })
+               
+                    
+                
+           
         });
        
         console.log("jjjjjjjjjjjjjjjjjjjjjjjjjj")
@@ -113,6 +133,8 @@ function FormUser() {
                         checked={isShown}
                         onChange={togglePassword}
                     />
+                    <p className="text-danger"> {errors.validateErr} </p>
+
                   </div>
 
                 <div className="pt-1 mb-4">

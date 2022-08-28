@@ -9,10 +9,15 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
+import '../styling/doctor_D.css'
+
 
 function Profile() {
 
+
     let user = localStorage.getItem('user')
+    const patientName = localStorage.getItem('user')
+
     const [doctorinfo, setdoctorinfo] = useState(false);
     const [workAddress, setworkAddress] = useState(false);
     const [rate_doc, setrate_doc] = useState(false);
@@ -20,6 +25,81 @@ function Profile() {
     const params = useParams();
     var doc_name = params.name
     const [doc_data, setdoc_data] = useState([]);
+
+    const [Rate, setRate] = useState({
+        rate: "",
+        notes: "",
+        msg:''
+    }
+    );
+
+    const [Paypal, setPaypal] = useState({
+      
+        msg:'',
+        date:'',
+        hour:''
+    }
+    );
+    const [errors, setErrors] = useState({
+        rateErr: null,
+        notesErr: null,
+        validationErr:null
+    })
+    const changeData = (e) => {
+        if (e.target.name === 'rate') {
+            setRate({
+                ...Rate,
+                rate: e.target.value
+            })
+            setErrors({
+                ...errors,
+                rateErr: e.target.value > 5 ?
+                    'please enter number from 1 to 5' :
+                    null
+            })
+        }
+        if (e.target.name === 'comment') {
+            setRate({
+                ...Rate,
+                notes: e.target.value
+
+            })
+
+        }
+
+    }
+    
+    const submitData = async (e) => {
+        const uploadData = new FormData()
+        uploadData.append('rate', Rate.rate);
+        uploadData.append('notes', Rate.notes);
+        uploadData.append('patient', patientName)
+        e.preventDefault();
+      await  axios({
+            method: 'post',
+            url:`http://127.0.0.1:8000/appointment/rate/${doc_name}`,
+            data: uploadData
+
+        }).then((res) => {
+                console.log(res)
+                console.log("kkkkkkkkkkk")
+                setRate({
+                    rate: "",
+                    notes: "",
+                    msg : res.data.msg
+                });
+            }).catch((err) => {
+                setErrors({
+                    ...errors,
+                    validationErr:err.response.data.msg
+                })
+                // console.log(err)
+                // console.log(err.response.data.msg)
+                console.log("ssssssssssssssssssssssssssssssssssssssssssssss")
+
+            });
+
+    }
     useEffect(() => async () => {
         await axios.get(`http://127.0.0.1:8000/doctordata/${doc_name}`)
 
@@ -29,42 +109,61 @@ function Profile() {
     console.log(doc_data.price)
 
     useEffect(() => {
-
+        
+    
         if (doc_data.price) {
-            window.paypal.Buttons({
-                createOrder: (data, actions) => {
+            
+            if(localStorage.getItem('doc') === 'patient')
+            {
+                window.paypal.Buttons({
+                    
+                    createOrder: (data, actions) => {
 
-                    return actions.order.create({
+                        return actions.order.create({
 
-                        purchase_units: [{
-                            amount: {
-                                value: doc_data.price
-                            }
-                        }]
-                    });
-                },
-                onApprove: (data, actions) => {
-                    return actions.order.capture().then(details => {
-                        axios
-                            .post("http://127.0.0.1:8000/appointment/appointment/", {
-                                doctor: doc_name,
-                                patient: user
-                            })
-                            .then((res) => {
-                                console.log(res.data)
+                            purchase_units: [{
+                                amount: {
+                                    value: doc_data.price
+                                } 
+                            }]
+                        });
+                    },
+                    onApprove: (data, actions) => {
+                        return actions.order.capture().then(details => {
+                            axios
+                                .post("http://127.0.0.1:8000/appointment/appointment/", {
+                                    doctor: doc_name,
+                                    patient: user
+                                })
+                                .then((res) => {
+                                    setPaypal({
+                                        msg : res.data.msg,
+                                       date:res.data.date,
+                                       hour:res.data.hour,
 
-                            })
-                            .catch((err) => {
-                                console.log(err.response.data)
-                            });
+                                    });
+                                    // (res.data)
 
-                        // alert ('Thanks For Paying dear ' + details.payer.name.given_name);
-                    });
-                }
 
+                                })
+                                .catch((err) => {
+                                    console.log(err.response.data.msg)
+                                });
+
+                            // alert ('Thanks For Paying ');
+                        });
+                    }
+                
             }).render('#paypal-button-container')
         }
-    }, [doc_data.price])
+        else
+    {
+     alert('You Must Sign Up as Patient To register')   
+    }
+
+    }
+    
+}, [doc_data.price])
 
 
     const imagepath = `http://127.0.0.1:8000${doc_data.image}`
@@ -72,104 +171,129 @@ function Profile() {
     return (
 
         <>
-            <section className="vh-100" style={{ backgroundColor: '#01446E' }}>
+            <section style={{ backgroundColor: "#01446E" }}>
                 <div className="container py-5 h-100">
-                    <div className="row d-flex justify-content-center align-items-center h-100">
-                        <div className="col-md-12 col-xl-4">
 
-                            <div className="card" style={{ borderRadius: '15px' }}>
-                                <div className="card-body text-center">
-                                    <div className="mt-3 mb-4">
-                                        <img src={imagepath}
-                                            className="rounded-circle img-fluid" style={{ width: '100px' }} />
-                                    </div>
+                    <div className="row d-flex justify-content-center">
 
+                        <div className="col-md-7">
 
-                                    <h2 className="mb-2">Dr.{doc_name}</h2>
-                                    <p className="text-muted mb-4" style={{ fontSize: '30px' }}>{doc_data.specialist_doctor}<span className="mx-2">|</span> {doc_data.address}</p>
+                            <div className="card p-3 py-4">
 
+                                <div className="text-center">
+                                    <img src={imagepath} width="100" className="rounded-circle" />
+                                    <div className="text-center mt-3">
+                                        <h2 className="mt-2 mb-0">Dr.{doc_name}</h2>
+                                        <span style={{ fontSize: '30px' }}>{doc_data.specialist_doctor}</span>
 
-                                    <div id="paypal-button-container" className="btn btn-primary btn-rounded btn-lg" >
+                                        <div className="buttons">
 
-                                    </div>
+                                            <div id="paypal-button-container" className="btn btn-primary btn-rounded btn-lg" >
 
-                                    {/* <button  type="button" className="btn btn-primary btn-rounded btn-lg" onClick={BookApointment}>
-                                        Booking Now
-                                    </button> */}
+                                            </div>
 
-                                    <div classNameName="d-flex justify-content-between text-center mt-5 mb-2">
-                                        <div>
-                                            <h5 classNameName='prsone' style={{ color: '#01446E' }}>Person Information</h5>
-                                            <button onClick={() => setdoctorinfo(!doctorinfo)} className='Arrow' >
-                                                <FontAwesomeIcon icon={faArrowDown} />
-                                            </button>
-
-                                            {
-                                                doctorinfo ? <div className='doctorinfo'>
-                                                    {doc_data.bio}</div>
-
-                                                    : null
-                                            }
                                         </div>
-                                        <div className="px-1">
-                                            <h5 classNameName='prsone' style={{ color: '#01446E' }}>Working Address</h5>
-                                            <button onClick={() => setworkAddress(!workAddress)} className='Arrow' >
-                                                <FontAwesomeIcon icon={faArrowDown} />
-                                            </button>
-                                            {
-                                                workAddress ? <div className='doctorinfo' >
-                                                    {doc_data.address_detail}</div>
+                                        <p className="text-green" style={{fontSize:'30px' ,color:'red'}}> {Paypal.msg} {Paypal.date} {Paypal.hour}</p>
 
-                                                    : null
-                                            }
+                                        <div className="d-flex justify-content-between text-center mt-5 mb-2" >
+                                            <div>
+                                                <h5 style={{ color: '#01446E' }}>Person Information</h5>
+                                                <button onClick={() => setdoctorinfo(!doctorinfo)} className='Arrow' >
+                                                    <FontAwesomeIcon icon={faArrowDown} />
+                                                </button>
+
+                                                {
+                                                    doctorinfo ? <div className='doctorinfo'>
+                                                        {doc_data.bio}
+                                                    </div>
+
+                                                        : null
+                                                }
+                                            </div>
+                                            <div >
+                                                <h5 className='prsone' style={{ color: '#01446E' }}>Working Address</h5>
+                                                <button onClick={() => setworkAddress(!workAddress)} className='Arrow' >
+                                                    <FontAwesomeIcon icon={faArrowDown} />
+                                                </button>
+                                                {
+                                                    workAddress ? <div className='doctorinfo' >
+                                                        Assuit,Elhelaly Street </div>
+
+                                                        : null
+                                                }
+                                            </div>
+
                                         </div>
+
+                                        <button className='Arrow' style={{ borderRadius: '5px', fontSize: '25px' }} onClick={() => setrate_doc(!rate_doc)}  >
+                                            <FontAwesomeIcon icon={faArrowDown} />
+                                            Rate
+                                        </button>
+
+                                        {
+                                            rate_doc ?
+
+                                                <Form onSubmit={(e) => submitData(e)}>
+                                                    <br />
+                                                    <Form.Label htmlFor="rate1">Giv Rate</Form.Label>
+                                                    <Form.Control
+                                                        type="number"
+                                                        id="rate1"
+                                                        min='1' max='5'
+                                                        placeholder='give rate from 1 to 5'
+                                                        name='rate'
+                                                        value={Rate.rate}
+                                                        onChange={(e) => changeData(e)}
+                                                    />
+
+
+                                                    <Form.Label htmlFor="rate">Comment</Form.Label>
+                                                    <Form.Control
+                                                        type="textarea"
+                                                        id="rate"
+                                                        placeholder='write your comment'
+                                                        name='comment'
+                                                        value={Rate.notes}
+                                                        onChange={(e) => changeData(e)}
+                                                    />
+                                                    <br />
+                                                    <p className="text-green" style={{fontSize:'30px' ,color:'green'}}> {Rate.msg} </p>
+                                                    <p className="text-danger" style={{fontSize:'30px'}}> {errors.validationErr} </p>
+
+
+                                                    <div class="buttons">
+
+                                                        <button class="btn btn-outline-primary px-4" type='submit'>
+                                                            Rate Now
+                                                        </button>
+                                                        {/* <Button className="btn btn-outline-primary px-4  " type="submit" >
+                                                Rate Now
+                                            </Button> */}
+                                                    </div>
+
+                                                </Form>
+
+
+
+                                                : null
+                                        }
+
+                                        <br />
+
+
 
 
                                     </div>
-                                    <button className='btn btn-primary' onClick={() => setrate_doc(!rate_doc)}  >
-                                        <FontAwesomeIcon />
-                                        Rate
-                                    </button>
 
-                                    {
-                                        rate_doc ?
-
-                                            <Form.Group className="mb-3">
-                                                <br />
-                                                <Form.Label htmlFor="rate">Giv Rate</Form.Label>
-                                                <Form.Control
-                                                    type="number"
-                                                    id="rate"
-                                                    min='1' max='5'
-                                                    placeholder='give rate from 1 to 5'
-                                                />
-
-
-                                                <Form.Label htmlFor="rate">Comment</Form.Label>
-                                                <Form.Control
-                                                    type="textarea"
-                                                    id="rate"
-                                                    placeholder='write your comment'
-                                                />
-                                            </Form.Group>
-
-
-
-                                            : null
-                                    }
-
-                                    <br />
 
 
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
-            </section>
-        </>
-    )
+                </section>
+            </>
+            )
 
 } export default Profile;
